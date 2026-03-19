@@ -17,13 +17,15 @@
     .btn-red { background-color: #d32e30; color: white; border-radius: 12px; padding: 15px; font-weight: 700; border: none; width: 100%; font-size: 18px; cursor: pointer; }
     .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-weight: 800; color: #333; text-transform: uppercase; }
     .dashboard-block { background: #fef2f2; border: 2px solid #fecaca; border-radius: 16px; padding: 35px 20px; text-align: center; margin-bottom: 15px; cursor: pointer; color: #d32e30; font-weight: 800; font-size: 18px; }
+    .dashboard-block.gray { background: #f4f4f5; border: 2px solid #e4e4e7; color: #52525b; }
     .btn-gray { background-color: #71717a; color: white; border-radius: 12px; padding: 15px; font-weight: 700; border: none; width: 100%; margin-top: 15px; cursor: pointer; font-size: 16px; }
+    .btn-logout { background-color: #fff; color: #d32e30; border: 2px solid #d32e30; border-radius: 10px; padding: 6px 16px; font-weight: 700; font-size: 13px; cursor: pointer; }
 
     /* Scanner */
     #videoContainer { position: relative; width: 100%; border-radius: 16px; overflow: hidden; background: #000; }
     #video { width: 100%; display: block; }
     #canvas { display: none; }
-    .corner-tl, .corner-tr, .corner-bl, .corner-br { content: ''; position: absolute; width: 36px; height: 36px; border-color: #fff; border-style: solid; }
+    .corner-tl, .corner-tr, .corner-bl, .corner-br { position: absolute; width: 36px; height: 36px; border-color: #fff; border-style: solid; }
     .corner-tl { top: 18%; left: 12%; border-width: 4px 0 0 4px; border-radius: 4px 0 0 0; }
     .corner-tr { top: 18%; right: 12%; border-width: 4px 4px 0 0; border-radius: 0 4px 0 0; }
     .corner-bl { bottom: 18%; left: 12%; border-width: 0 0 4px 4px; border-radius: 0 0 0 4px; }
@@ -33,106 +35,61 @@
       mask-image: radial-gradient(ellipse 76% 64% at 50% 50%, transparent 99%, black 100%); }
     #status { text-align: center; margin-top: 12px; color: #888; font-size: 13px; min-height: 30px; }
 
+    /* Session badge on dashboard */
+    .session-badge { background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 12px; padding: 12px 16px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+    .session-badge .count { font-size: 28px; font-weight: 800; color: #065f46; }
+    .session-badge .label { font-size: 12px; color: #6b7280; font-weight: 600; }
+
     /* Confirmation Popup */
-    #popupOverlay {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.6);
-      z-index: 1000;
-      align-items: flex-end;
-      justify-content: center;
-    }
+    #popupOverlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 1000; align-items: flex-end; justify-content: center; }
     #popupOverlay.show { display: flex; }
-    #popupCard {
-      background: #fff;
-      border-radius: 24px 24px 0 0;
-      padding: 30px 25px 40px;
-      width: 100%;
-      max-width: 480px;
-      animation: slideUp 0.3s ease;
-    }
+    #popupCard { background: #fff; border-radius: 24px 24px 0 0; padding: 30px 25px 40px; width: 100%; max-width: 480px; animation: slideUp 0.3s ease; }
     @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-    .popup-tag {
-      display: inline-block;
-      background: #fef2f2;
-      color: #d32e30;
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      padding: 4px 12px;
-      border-radius: 20px;
-      margin-bottom: 12px;
-    }
+    .popup-tag { display: inline-block; background: #fef2f2; color: #d32e30; font-size: 11px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; padding: 4px 12px; border-radius: 20px; margin-bottom: 12px; }
     .popup-promo { font-size: 22px; font-weight: 800; color: #1a1a1a; margin-bottom: 6px; }
     .popup-brand { font-size: 14px; color: #888; margin-bottom: 20px; }
     .popup-divider { height: 1px; background: #f0f0f0; margin: 16px 0; }
     .popup-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; }
     .popup-label { font-size: 13px; color: #999; font-weight: 500; }
     .popup-value { font-size: 13px; color: #333; font-weight: 700; text-align: right; }
-    .days-badge {
-      background: #ecfdf5;
-      color: #065f46;
-      font-size: 13px;
-      font-weight: 800;
-      padding: 4px 12px;
-      border-radius: 20px;
-      border: 1px solid #a7f3d0;
-    }
+    .days-badge { background: #ecfdf5; color: #065f46; font-size: 13px; font-weight: 800; padding: 4px 12px; border-radius: 20px; border: 1px solid #a7f3d0; }
     .days-badge.urgent { background: #fff7ed; color: #c2410c; border-color: #fed7aa; }
     .popup-code { background: #f8f9fa; border-radius: 10px; padding: 10px 14px; font-size: 12px; color: #666; font-family: monospace; text-align: center; margin: 16px 0; letter-spacing: 1px; }
-    .btn-redeem { background: #d32e30; color: white; border-radius: 14px; padding: 18px; font-weight: 800; border: none; width: 100%; font-size: 18px; cursor: pointer; margin-top: 8px; letter-spacing: 0.5px; }
+    .btn-redeem { background: #d32e30; color: white; border-radius: 14px; padding: 18px; font-weight: 800; border: none; width: 100%; font-size: 18px; cursor: pointer; margin-top: 8px; }
     .btn-cancel { background: #f1f1f1; color: #555; border-radius: 14px; padding: 14px; font-weight: 700; border: none; width: 100%; font-size: 15px; cursor: pointer; margin-top: 10px; }
 
     /* Error popup */
-    #errorOverlay {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.6);
-      z-index: 1000;
-      align-items: center;
-      justify-content: center;
-    }
+    #errorOverlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 1000; align-items: center; justify-content: center; }
     #errorOverlay.show { display: flex; }
-    #errorCard {
-      background: #fff;
-      border-radius: 20px;
-      padding: 30px 25px;
-      width: 85%;
-      max-width: 340px;
-      text-align: center;
-      animation: popIn 0.2s ease;
-    }
+    #errorCard { background: #fff; border-radius: 20px; padding: 30px 25px; width: 85%; max-width: 340px; text-align: center; animation: popIn 0.2s ease; }
     @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     .error-icon { font-size: 40px; margin-bottom: 12px; }
     .error-msg { font-size: 16px; font-weight: 700; color: #333; margin-bottom: 20px; }
     .btn-ok { background: #d32e30; color: white; border-radius: 12px; padding: 12px; font-weight: 700; border: none; width: 100%; font-size: 16px; cursor: pointer; }
 
     /* Success flash */
-    #successOverlay {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.6);
-      z-index: 1000;
-      align-items: center;
-      justify-content: center;
-    }
+    #successOverlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 1000; align-items: center; justify-content: center; }
     #successOverlay.show { display: flex; }
-    #successCard {
-      background: #fff;
-      border-radius: 20px;
-      padding: 35px 25px;
-      width: 85%;
-      max-width: 340px;
-      text-align: center;
-      animation: popIn 0.2s ease;
-    }
+    #successCard { background: #fff; border-radius: 20px; padding: 35px 25px; width: 85%; max-width: 340px; text-align: center; animation: popIn 0.2s ease; }
     .success-icon { font-size: 50px; margin-bottom: 12px; }
     .success-title { font-size: 20px; font-weight: 800; color: #065f46; margin-bottom: 6px; }
     .success-sub { font-size: 14px; color: #888; }
+
+    /* Session Summary */
+    #summaryOverlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 1000; align-items: flex-end; justify-content: center; }
+    #summaryOverlay.show { display: flex; }
+    #summaryCard { background: #fff; border-radius: 24px 24px 0 0; padding: 30px 25px 40px; width: 100%; max-width: 480px; max-height: 80vh; overflow-y: auto; animation: slideUp 0.3s ease; }
+    .summary-header { font-size: 20px; font-weight: 800; color: #1a1a1a; margin-bottom: 4px; }
+    .summary-sub { font-size: 13px; color: #888; margin-bottom: 20px; }
+    .summary-total { background: #fef2f2; border-radius: 12px; padding: 16px; text-align: center; margin-bottom: 20px; }
+    .summary-total .num { font-size: 36px; font-weight: 800; color: #d32e30; }
+    .summary-total .lbl { font-size: 12px; color: #888; font-weight: 600; margin-top: 2px; }
+    .summary-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f5f5f5; }
+    .summary-item:last-child { border-bottom: none; }
+    .summary-item .promo { font-size: 14px; font-weight: 700; color: #1a1a1a; }
+    .summary-item .code { font-size: 11px; color: #999; font-family: monospace; margin-top: 2px; }
+    .summary-item .brand-tag { font-size: 11px; color: #d32e30; font-weight: 700; background: #fef2f2; padding: 2px 8px; border-radius: 10px; }
+    .btn-close-summary { background: #1a1a1a; color: white; border-radius: 14px; padding: 16px; font-weight: 800; border: none; width: 100%; font-size: 16px; cursor: pointer; margin-top: 20px; }
   </style>
 </head>
 <body>
@@ -151,10 +108,22 @@
   <div id="dash" class="screen card">
     <div class="header-row">
       <span id="userDisplay"></span>
-      <button onclick="showScreen('loginScreen')" class="btn btn-sm btn-outline-secondary" style="font-weight:700;">LOGOUT</button>
+      <button onclick="logout()" class="btn-logout">LOGOUT</button>
     </div>
     <hr style="margin-bottom:20px;">
+
+    <!-- Session counter badge -->
+    <div class="session-badge">
+      <div>
+        <div class="label">THIS SESSION</div>
+        <div class="count" id="sessionCount">0</div>
+        <div class="label">vouchers redeemed</div>
+      </div>
+      <div style="font-size:32px;">🎫</div>
+    </div>
+
     <div class="dashboard-block" onclick="openScanner()">SCAN VOUCHER</div>
+    <div class="dashboard-block gray" onclick="showSummary()">VIEW SESSION SUMMARY</div>
     <div class="dashboard-block" onclick="alert('Manual Promo Selected')">MANUAL PROMOTION</div>
   </div>
 
@@ -215,7 +184,7 @@
   </div>
 </div>
 
-<!-- SUCCESS POPUP -->
+<!-- SUCCESS FLASH -->
 <div id="successOverlay">
   <div id="successCard">
     <div class="success-icon">✅</div>
@@ -224,10 +193,27 @@
   </div>
 </div>
 
+<!-- SESSION SUMMARY -->
+<div id="summaryOverlay">
+  <div id="summaryCard">
+    <div class="summary-header">Session Summary</div>
+    <div class="summary-sub" id="summaryStaff"></div>
+    <div class="summary-total">
+      <div class="num" id="summaryTotal">0</div>
+      <div class="lbl">VOUCHERS REDEEMED</div>
+    </div>
+    <div id="summaryList"></div>
+    <button class="btn-close-summary" onclick="closeSummary()">Close</button>
+  </div>
+</div>
+
 <script>
   const GAS_URL = "https://script.google.com/macros/s/AKfycbysEwgrqz9dG5DDo2LgrcebeKJu4wejIIW1jr3V5mwtvZRHnvdDuR38NmGIC2GceRo1/exec";
 
   let currentUser = "";
+  let currentBranch = "";
+  let sessionId = "";
+  let sessionLog = []; // stores all redeemed vouchers this session
   let videoStream = null;
   let scanInterval = null;
   let scanPaused = false;
@@ -254,7 +240,18 @@
       const res = await callGAS('verifyStaffLogin', { passcode: code });
       if (res.success) {
         currentUser = res.name;
-        document.getElementById('userDisplay').innerText = res.name;
+        currentBranch = res.branch || "";
+        // Generate session ID at login
+        const now = new Date();
+        const stamp = now.getFullYear().toString() +
+          String(now.getMonth()+1).padStart(2,'0') +
+          String(now.getDate()).padStart(2,'0') + '-' +
+          String(now.getHours()).padStart(2,'0') +
+          String(now.getMinutes()).padStart(2,'0');
+        sessionId = `${currentUser.toUpperCase().replace(/\s/g,'-')}-${stamp}`;
+        sessionLog = [];
+        document.getElementById('userDisplay').innerText = currentUser;
+        document.getElementById('sessionCount').innerText = '0';
         showScreen('dash');
       } else {
         document.getElementById('loginStatus').innerText = "Incorrect PIN";
@@ -262,6 +259,17 @@
     } catch(e) {
       document.getElementById('loginStatus').innerText = "Connection error. Try again.";
     }
+  }
+
+  function logout() {
+    stopCamera();
+    currentUser = "";
+    currentBranch = "";
+    sessionId = "";
+    sessionLog = [];
+    document.getElementById('passcode').value = "";
+    document.getElementById('loginStatus').innerText = "";
+    showScreen('loginScreen');
   }
 
   function openScanner() {
@@ -350,7 +358,6 @@
     document.getElementById('popupFrom').innerText = data.validFrom;
     document.getElementById('popupTo').innerText = data.validTo;
     document.getElementById('popupCode').innerText = data.code;
-
     const daysEl = document.getElementById('popupDays');
     if (data.daysLeft !== null) {
       const urgent = data.daysLeft <= 3;
@@ -358,7 +365,6 @@
     } else {
       daysEl.innerHTML = `<span class="popup-value">No expiry</span>`;
     }
-
     document.getElementById('popupOverlay').classList.add('show');
   }
 
@@ -373,9 +379,15 @@
     document.getElementById('popupOverlay').classList.remove('show');
     try {
       const res = await callGAS('redeemVoucher', {
-        scannedCode: pendingCode, staffName: currentUser, branch: ""
+        scannedCode: pendingCode,
+        staffName: currentUser,
+        sessionId: sessionId,
+        branch: currentBranch
       });
       if (res.success) {
+        // Add to session log
+        sessionLog.push({ code: pendingCode, promoName: res.promoName, brand: res.brand });
+        document.getElementById('sessionCount').innerText = sessionLog.length;
         showSuccess(res.message);
       } else {
         showError(res.message);
@@ -404,7 +416,31 @@
       document.getElementById('successOverlay').classList.remove('show');
       scanPaused = false;
       document.getElementById('status').innerText = "Scanning live...";
-    }, 2500);
+    }, 2000);
+  }
+
+  function showSummary() {
+    document.getElementById('summaryStaff').innerText = `Staff: ${currentUser}  ·  Session: ${sessionId}`;
+    document.getElementById('summaryTotal').innerText = sessionLog.length;
+    const list = document.getElementById('summaryList');
+    if (sessionLog.length === 0) {
+      list.innerHTML = `<div style="text-align:center;color:#bbb;padding:20px;font-size:14px;">No vouchers redeemed yet this session.</div>`;
+    } else {
+      list.innerHTML = sessionLog.map((v, i) => `
+        <div class="summary-item">
+          <div>
+            <div class="promo">${v.promoName}</div>
+            <div class="code">${v.code}</div>
+          </div>
+          <span class="brand-tag">${v.brand}</span>
+        </div>
+      `).join('');
+    }
+    document.getElementById('summaryOverlay').classList.add('show');
+  }
+
+  function closeSummary() {
+    document.getElementById('summaryOverlay').classList.remove('show');
   }
 </script>
 </body>
