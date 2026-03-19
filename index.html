@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
@@ -18,16 +18,60 @@
     .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-weight: 800; color: #333; text-transform: uppercase; }
     .dashboard-block { background: #fef2f2; border: 2px solid #fecaca; border-radius: 16px; padding: 35px 20px; text-align: center; margin-bottom: 15px; cursor: pointer; color: #d32e30; font-weight: 800; font-size: 18px; }
     .btn-gray { background-color: #71717a; color: white; border-radius: 12px; padding: 15px; font-weight: 700; border: none; width: 100%; margin-top: 15px; cursor: pointer; }
-    #videoContainer { position: relative; width: 100%; border-radius: 12px; overflow: hidden; border: 3px solid #d32e30; background: #000; min-height: 250px; }
+
+    /* Scanner */
+    #videoContainer {
+      position: relative;
+      width: 100%;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #000;
+    }
     #video { width: 100%; display: block; }
     #canvas { display: none; }
-    .scan-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 200px; height: 200px; border: 3px solid #fff; border-radius: 12px; box-shadow: 0 0 0 9999px rgba(0,0,0,0.45); pointer-events: none; }
-    .scan-line { position: absolute; left: 0; right: 0; height: 3px; background: #d32e30; animation: scan 2s linear infinite; }
-    @keyframes scan { 0%{top:0} 100%{top:100%} }
+
+    /* Corner bracket overlay — clean, no distracting lines */
+    .corner-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+    }
+    .corner-overlay::before, .corner-overlay::after,
+    .corner-tl, .corner-tr, .corner-bl, .corner-br {
+      content: '';
+      position: absolute;
+      width: 36px;
+      height: 36px;
+      border-color: #fff;
+      border-style: solid;
+    }
+    .corner-tl { top: 18%; left: 12%; border-width: 4px 0 0 4px; border-radius: 4px 0 0 0; }
+    .corner-tr { top: 18%; right: 12%; border-width: 4px 4px 0 0; border-radius: 0 4px 0 0; }
+    .corner-bl { bottom: 18%; left: 12%; border-width: 0 0 4px 4px; border-radius: 0 0 0 4px; }
+    .corner-br { bottom: 18%; right: 12%; border-width: 0 4px 4px 0; border-radius: 0 0 4px 0; }
+
+    /* Dim overlay outside scan zone */
+    .dim-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.35);
+      pointer-events: none;
+      -webkit-mask-image: radial-gradient(
+        ellipse 76% 64% at 50% 50%,
+        transparent 99%,
+        black 100%
+      );
+      mask-image: radial-gradient(
+        ellipse 76% 64% at 50% 50%,
+        transparent 99%,
+        black 100%
+      );
+    }
+
     #result { font-weight: 800; padding: 15px; border-radius: 10px; text-align: center; margin-top: 15px; display: none; }
     .success { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
     .error { background: #fff5f5; color: #c92a2a; border: 1px solid #ffc9c9; }
-    #status { text-align: center; margin-top: 12px; color: #666; font-weight: 600; font-size: 14px; min-height: 40px; }
+    #status { text-align: center; margin-top: 12px; color: #888; font-size: 13px; min-height: 30px; }
   </style>
 </head>
 <body>
@@ -59,9 +103,15 @@
     <div id="videoContainer">
       <video id="video" autoplay playsinline muted></video>
       <canvas id="canvas"></canvas>
-      <div class="scan-overlay"><div class="scan-line"></div></div>
+      <div class="dim-overlay"></div>
+      <div class="corner-overlay">
+        <div class="corner-tl"></div>
+        <div class="corner-tr"></div>
+        <div class="corner-bl"></div>
+        <div class="corner-br"></div>
+      </div>
     </div>
-    <div id="status">Starting camera...</div>
+    <div id="status">Scanning live...</div>
     <div id="result"></div>
     <button onclick="closeScanner()" class="btn-gray">← Back to Menu</button>
   </div>
@@ -109,15 +159,19 @@
   function openScanner() {
     showScreen('scannerScreen');
     document.getElementById('result').style.display = 'none';
+    document.getElementById('status').innerText = "Starting camera...";
     scanPaused = false;
     startCamera();
   }
 
   function startCamera() {
     stopCamera();
-    document.getElementById('status').innerText = "Starting camera...";
     navigator.mediaDevices.getUserMedia({
-      video: { facingMode: { ideal: "environment" }, width: { ideal: 1280 }, height: { ideal: 720 } }
+      video: {
+        facingMode: { ideal: "environment" },
+        width: { ideal: 1920 },
+        height: { ideal: 1080 }
+      }
     })
     .then(stream => {
       videoStream = stream;
@@ -140,21 +194,37 @@
     const video = document.getElementById('video');
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
+
     scanInterval = setInterval(() => {
       if (scanPaused || video.readyState !== video.HAVE_ENOUGH_DATA) return;
+
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const code = jsQR(img.data, img.width, img.height, { inversionAttempts: "dontInvert" });
+
+      // Try full frame first
+      let img = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      let code = jsQR(img.data, img.width, img.height, { inversionAttempts: "attemptBoth" });
+
+      // If not found, try center crop for better accuracy
+      if (!code) {
+        const cropW = Math.floor(canvas.width * 0.7);
+        const cropH = Math.floor(canvas.height * 0.6);
+        const cropX = Math.floor((canvas.width - cropW) / 2);
+        const cropY = Math.floor((canvas.height - cropH) / 2);
+        img = ctx.getImageData(cropX, cropY, cropW, cropH);
+        code = jsQR(img.data, img.width, img.height, { inversionAttempts: "attemptBoth" });
+      }
+
       if (code) onScanSuccess(code.data);
-    }, 200);
+    }, 150); // faster scan rate
   }
 
   function stopCamera() {
     if (scanInterval) { clearInterval(scanInterval); scanInterval = null; }
     if (videoStream) { videoStream.getTracks().forEach(t => t.stop()); videoStream = null; }
-    document.getElementById('video').srcObject = null;
+    const video = document.getElementById('video');
+    if (video) video.srcObject = null;
   }
 
   function closeScanner() {
