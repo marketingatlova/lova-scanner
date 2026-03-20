@@ -536,13 +536,18 @@
   }
 
   async function callGAS(action, params) {
-    const res = await fetch(GAS_URL, {
+    const payload = JSON.stringify({ action, ...params });
+    const res = await fetch(GAS_URL + '?t=' + Date.now(), {
       method: 'POST',
-      body: JSON.stringify({ action, ...params }),
-      headers: { 'Content-Type': 'text/plain' }
+      body: payload,
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      redirect: 'follow'
     });
-    return res.json();
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const text = await res.text();
+    return JSON.parse(text);
   }
+
 
   // ── LOGIN ──
   async function login() {
