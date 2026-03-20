@@ -536,11 +536,9 @@
   }
 
   async function callGAS(action, params) {
-    const payload = JSON.stringify({ action, ...params });
-    const res = await fetch(GAS_URL + '?t=' + Date.now(), {
-      method: 'POST',
-      body: payload,
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    const url = GAS_URL + '?action=' + encodeURIComponent(action) + '&payload=' + encodeURIComponent(JSON.stringify(params)) + '&t=' + Date.now();
+    const res = await fetch(url, {
+      method: 'GET',
       redirect: 'follow'
     });
     if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -548,7 +546,7 @@
     try {
       return JSON.parse(text);
     } catch(parseErr) {
-      throw new Error('Parse fail: ' + text.substring(0, 100));
+      throw new Error('Parse fail: ' + text.substring(0, 120));
     }
   }
 
