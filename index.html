@@ -662,7 +662,7 @@
         img = ctx.getImageData(cx, cy, cw, ch);
         code = jsQR(img.data, img.width, img.height, { inversionAttempts: "attemptBoth" });
       }
-      if (code) { pendingMethod = "scan"; onLookup(code.data); }
+      if (code) { scanPaused = true; pendingMethod = "scan"; onLookup(code.data); }
     }, 150);
   }
 
@@ -692,6 +692,7 @@
 
   async function onLookup(code) {
     scanPaused = true;
+    document.getElementById('scanStatus').innerText = 'Code found — checking...';
     try {
       const res = await callGAS('lookupVoucher', { scannedCode: code });
       if (res.success) {
