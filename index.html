@@ -545,7 +545,11 @@
     });
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const text = await res.text();
-    return JSON.parse(text);
+    try {
+      return JSON.parse(text);
+    } catch(parseErr) {
+      throw new Error('Parse fail: ' + text.substring(0, 100));
+    }
   }
 
 
@@ -705,8 +709,9 @@
         scanPaused = false;
       }
     } catch(e) {
-      if (pendingMethod === "manual") document.getElementById('manualStatus').innerText = "Connection error. Try again.";
-      else showError("Connection error. Please try again.");
+      const errMsg = 'Error: ' + e.message + ' | ' + e.name;
+      if (pendingMethod === "manual") document.getElementById('manualStatus').innerText = errMsg;
+      else showError(errMsg);
       scanPaused = false;
     }
   }
