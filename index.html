@@ -484,16 +484,17 @@
 </div>
 
 <script>
-  const GAS_URL = "https://script.google.com/macros/s/AKfycby7qSLPRLeXOARFDx2oyEOO-7jLChoT9BD8ddT2VvLvn2DYX0_icmM0WspYjtBalvvj/exec";
+  // YOUR NEW WEB APP URL GOES HERE!
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbysEwgrqz9dG5DDo2LgrcebeKJu4wejIIW1jr3V5mwtvZRHnvdDuR38NmGIC2GceRo1/exec";
   
   // State 
   let currentUser   = "";
   let currentBranch = "";
   let sessionId     = "";
-  let sessionLog    = []; // combined log for summary
-  let promoHistory  = []; // promo mode session history
-  let allPromos     = []; // loaded from GAS
-  let currentMode   = "voucher";  // "voucher" | "promo"
+  let sessionLog    = []; 
+  let promoHistory  = []; 
+  let allPromos     = []; 
+  let currentMode   = "voucher";  
 
   // Voucher scan state
   let videoStream   = null;
@@ -508,18 +509,13 @@
     document.getElementById(id).classList.add('active');
   }
 
-  // --- THIS FUNCTION HAS BEEN UPDATED ---
+  // UPDATED callGAS (Uses GET to bypass iOS Safari POST issues)
   async function callGAS(action, params) {
-    // Package the action and params exactly as doPost expects
-    const payload = { action: action, ...params };
+    const url = GAS_URL + '?action=' + encodeURIComponent(action) + '&payload=' + encodeURIComponent(JSON.stringify(params)) + '&t=' + Date.now();
     
-    const res = await fetch(GAS_URL, {
-      method: 'POST',
-      redirect: 'follow',
-      headers: {
-        'Content-Type': 'text/plain;charset=utf-8' 
-      },
-      body: JSON.stringify(payload)
+    const res = await fetch(url, {
+      method: 'GET',
+      redirect: 'follow'
     });
     
     if (!res.ok) throw new Error('HTTP ' + res.status);
