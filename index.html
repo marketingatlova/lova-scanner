@@ -10,11 +10,11 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { background: #f5f5f5; padding: 10px 10px 40px; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }
 
-    /* ── Screens ── */
+    /* Screens  */
     .screen { display: none; }
     .screen.active { display: block; }
 
-    /* ── Cards ── */
+    /* Cards  */
     .card {
       border: none; border-radius: 20px;
       box-shadow: 0 4px 24px rgba(0,0,0,0.07);
@@ -22,20 +22,19 @@
       max-width: 440px; margin: 10px auto;
     }
 
-    /* ── Brand ── */
+    /* Brand  */
     .lova-title { color: #d32e30; font-weight: 800; font-size: 26px; text-align: center; letter-spacing: -0.5px; }
     .lova-sub   { color: #aaa; font-size: 13px; text-align: center; margin-bottom: 24px; }
 
-    /* ── Login ── */
+    /* Login  */
     .pin-input {
       font-size: 26px; letter-spacing: 14px; text-align: center;
       width: 100%; border: 1.5px solid #e0e0e0; border-radius: 14px;
-      padding: 14px; margin-bottom: 22px; color: #444;
-      transition: border-color .2s;
+      padding: 14px; margin-bottom: 22px; color: #444; transition: border-color .2s;
     }
     .pin-input:focus { outline: none; border-color: #d32e30; }
 
-    /* ── Buttons ── */
+    /* Buttons  */
     .btn-red {
       background: #d32e30; color: #fff; border-radius: 13px;
       padding: 15px; font-weight: 700; border: none; width: 100%;
@@ -54,7 +53,7 @@
       font-size: 12px; cursor: pointer;
     }
 
-    /* ── Dashboard header ── */
+    /* Dashboard header  */
     .header-row {
       display: flex; justify-content: space-between;
       align-items: center; margin-bottom: 18px;
@@ -62,7 +61,7 @@
     .header-name { font-weight: 800; color: #222; font-size: 15px; text-transform: uppercase; letter-spacing: .3px; }
     .header-branch { font-size: 11px; color: #aaa; font-weight: 500; margin-top: 1px; }
 
-    /* ── Mode tabs ── */
+    /* Mode tabs  */
     .mode-tabs {
       display: flex; background: #f4f4f5; border-radius: 12px;
       padding: 4px; margin-bottom: 20px; gap: 4px;
@@ -74,7 +73,7 @@
     }
     .mode-tab.active { background: #fff; color: #d32e30; box-shadow: 0 1px 6px rgba(0,0,0,0.1); }
 
-    /* ── Session badge ── */
+    /* Session badge  */
     .session-badge {
       background: #ecfdf5; border: 1px solid #a7f3d0;
       border-radius: 12px; padding: 12px 16px; margin-bottom: 16px;
@@ -84,7 +83,7 @@
     .session-badge .label { font-size: 11px; color: #6b7280; font-weight: 600; }
     .session-badge .icon  { font-size: 28px; }
 
-    /* ── Dashboard blocks ── */
+    /* Dashboard blocks  */
     .dash-block {
       border-radius: 16px; padding: 22px 20px; text-align: center;
       margin-bottom: 12px; cursor: pointer; font-weight: 800; font-size: 16px;
@@ -96,7 +95,7 @@
     .dash-block.gray  { background: #f4f4f5; border: 2px solid #e4e4e7; color: #52525b; }
     .dash-block .dash-icon { font-size: 22px; margin-bottom: 6px; }
 
-    /* ── Scanner ── */
+    /* Scanner  */
     #videoContainer { position: relative; width: 100%; border-radius: 16px; overflow: hidden; background: #000; }
     #video { width: 100%; display: block; }
     #canvas { display: none; }
@@ -113,17 +112,16 @@
     }
     #scanStatus { text-align: center; margin-top: 12px; color: #888; font-size: 13px; min-height: 28px; }
 
-    /* ── Manual entry ── */
+    /* Manual entry  */
     .code-input {
       font-size: 18px; letter-spacing: 3px; text-align: center; width: 100%;
       border: 2px solid #e0e0e0; border-radius: 13px; padding: 15px;
-      color: #333; font-family: monospace; text-transform: uppercase;
-      margin-bottom: 12px; transition: border-color .2s;
+      color: #333; font-family: monospace; text-transform: uppercase; margin-bottom: 12px; transition: border-color .2s;
     }
     .code-input:focus { outline: none; border-color: #d32e30; }
     .lookup-hint { font-size: 12px; color: #bbb; text-align: center; margin-bottom: 18px; }
 
-    /* ── Promo form ── */
+    /* Promo form  */
     .form-label-sm {
       font-size: 10px; text-transform: uppercase; font-weight: 700;
       color: #9ca3af; display: block; margin-bottom: 5px; letter-spacing: .5px;
@@ -148,14 +146,14 @@
     }
     .keep-receipt-row input { margin-right: 6px; accent-color: #d32e30; }
 
-    /* ── Branch warning ── */
+    /* Branch warning  */
     .branch-warn {
       background: #fff5f5; border: 1px solid #ffc9c9; color: #c92a2a;
       font-size: 12px; padding: 10px 12px; border-radius: 10px;
       margin-bottom: 14px; display: flex; align-items: center; font-weight: 500;
     }
 
-    /* ── Voucher confirmation popup ── */
+    /* Voucher confirmation popup  */
     #popupOverlay {
       display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(0,0,0,.6); z-index: 1000;
@@ -200,7 +198,7 @@
       font-size: 15px; cursor: pointer; margin-top: 10px;
     }
 
-    /* ── Error popup ── */
+    /* Error popup  */
     #errorOverlay {
       display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(0,0,0,.6); z-index: 1000;
@@ -217,7 +215,7 @@
     .error-msg  { font-size: 15px; font-weight: 700; color: #333; margin-bottom: 18px; }
     .btn-ok { background: #d32e30; color: #fff; border-radius: 12px; padding: 12px; font-weight: 700; border: none; width: 100%; font-size: 15px; cursor: pointer; }
 
-    /* ── Success overlay ── */
+    /* Success overlay  */
     #successOverlay {
       display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(0,0,0,.6); z-index: 1000;
@@ -233,7 +231,7 @@
     .success-title { font-size: 20px; font-weight: 800; color: #065f46; margin-bottom: 4px; }
     .success-sub   { font-size: 13px; color: #888; }
 
-    /* ── Session summary ── */
+    /* Session summary  */
     #summaryOverlay {
       display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(0,0,0,.6); z-index: 1000;
@@ -268,14 +266,14 @@
       font-size: 15px; cursor: pointer; margin-top: 18px;
     }
 
-    /* ── Status msg (promo mode) ── */
+    /* Status msg (promo mode)  */
     .status-saved {
       background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46;
       font-size: 14px; font-weight: 700; padding: 12px; border-radius: 12px;
       text-align: center; margin-top: 12px;
     }
 
-    /* ── Promo history ── */
+    /* Promo history  */
     .history-header {
       font-size: 10px; text-transform: uppercase; font-weight: 700;
       color: #9ca3af; margin-top: 22px; margin-bottom: 8px;
@@ -298,9 +296,6 @@
 <body>
 <div class="container" style="padding:0;">
 
-  <!-- ═══════════════════════════════════════
-       LOGIN
-  ════════════════════════════════════════ -->
   <div id="loginScreen" class="screen active card">
     <div class="lova-title">Lova</div>
     <div class="lova-sub">Staff Access — enter your 6-digit passcode</div>
@@ -310,9 +305,6 @@
     <div id="loginStatus" class="text-center mt-3" style="font-weight:700;color:#d32e30;font-size:14px;"></div>
   </div>
 
-  <!-- ═══════════════════════════════════════
-       DASHBOARD
-  ════════════════════════════════════════ -->
   <div id="dash" class="screen card">
     <div class="header-row">
       <div>
@@ -323,43 +315,39 @@
     </div>
     <hr>
 
-    <!-- Mode tabs -->
     <div class="mode-tabs">
-      <button class="mode-tab active" id="tabVoucher" onclick="switchMode('voucher')">🎫 Voucher</button>
-      <button class="mode-tab" id="tabPromo" onclick="switchMode('promo')">📋 Promo Record</button>
+      <button class="mode-tab active" id="tabVoucher" onclick="switchMode('voucher')"> Voucher</button>
+      <button class="mode-tab" id="tabPromo" onclick="switchMode('promo')"> Promo Record</button>
     </div>
 
-    <!-- Session badge (shared) -->
     <div class="session-badge">
       <div>
         <div class="label">THIS SESSION</div>
         <div class="count" id="sessionCount">0</div>
         <div class="label">total records</div>
       </div>
-      <div class="icon" id="sessionIcon">🎫</div>
+      <div class="icon" id="sessionIcon"></div>
     </div>
 
-    <!-- ── Voucher mode buttons ── -->
     <div id="voucherDash">
       <div class="dash-block red" onclick="openScanner()">
-        <div class="dash-icon">📷</div>
+        <div class="dash-icon"></div>
         SCAN VOUCHER
       </div>
       <div class="dash-block dark" onclick="openManual()">
-        <div class="dash-icon">⌨️</div>
+        <div class="dash-icon"></div>
         ENTER CODE MANUALLY
       </div>
       <div class="dash-block gray" onclick="showSummary()">
-        <div class="dash-icon">📋</div>
+        <div class="dash-icon"></div>
         VIEW SESSION SUMMARY
       </div>
     </div>
 
-    <!-- ── Promo mode form ── -->
     <div id="promoDash" class="hidden">
 
       <div id="branchWarning" class="branch-warn hidden">
-        <span style="margin-right:8px;">⚠️</span>
+        <span style="margin-right:8px;"></span>
         <span id="warningText">Location mismatch</span>
       </div>
 
@@ -368,7 +356,7 @@
         <option value="" disabled selected>Select Location...</option>
         <option value="LAVA|Main Branch">LAVA (Thong Lo)</option>
         <option value="HOLY BELLY|Main Branch">HOLY BELLY</option>
-        <option disabled>──────────</option>
+        <option disabled></option>
         <option value="BIANCA|ICONSIAM">Bianca – ICONSIAM</option>
         <option value="BIANCA|Siam Paragon">Bianca – Siam Paragon</option>
         <option value="BIANCA|Emsphere">Bianca – Emsphere</option>
@@ -399,7 +387,7 @@
       <div id="promoLoader" class="text-center mt-3 hidden" style="color:#d32e30;font-weight:700;font-size:14px;">
         <span class="spinner-border spinner-border-sm me-1"></span> Saving...
       </div>
-      <div id="promoStatus" class="status-saved hidden">✅ Record Saved</div>
+      <div id="promoStatus" class="status-saved hidden"> Record Saved</div>
 
       <div id="promoHistorySection" class="hidden">
         <div class="history-header">Session history (<span id="promoHistoryCount">0</span>)</div>
@@ -408,9 +396,6 @@
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════
-       SCANNER SCREEN
-  ════════════════════════════════════════ -->
   <div id="scannerScreen" class="screen card">
     <div class="lova-title" style="font-size:17px;margin-bottom:14px;">Point camera at Voucher</div>
     <div id="videoContainer">
@@ -421,12 +406,9 @@
       <div class="corner-bl"></div><div class="corner-br"></div>
     </div>
     <div id="scanStatus">Scanning live...</div>
-    <button onclick="closeScanner()" class="btn-gray">← Back to Menu</button>
+    <button onclick="closeScanner()" class="btn-gray"> Back to Menu</button>
   </div>
 
-  <!-- ═══════════════════════════════════════
-       MANUAL ENTRY SCREEN
-  ════════════════════════════════════════ -->
   <div id="manualScreen" class="screen card">
     <div class="lova-title" style="font-size:19px;margin-bottom:4px;">Enter Voucher Code</div>
     <div class="lova-sub">Type the full code from the voucher</div>
@@ -438,14 +420,11 @@
     <div class="lookup-hint">Code is not case sensitive</div>
     <button onclick="lookupManual()" class="btn-red">Look Up Voucher</button>
     <div id="manualStatus" class="text-center mt-3" style="font-weight:700;color:#d32e30;font-size:14px;"></div>
-    <button onclick="showScreen('dash')" class="btn-gray">← Back to Menu</button>
+    <button onclick="showScreen('dash')" class="btn-gray"> Back to Menu</button>
   </div>
 
 </div>
 
-<!-- ═══════════════════════════════════════
-     VOUCHER CONFIRMATION POPUP
-════════════════════════════════════════ -->
 <div id="popupOverlay">
   <div id="popupCard">
     <div class="popup-tag">Voucher Found</div>
@@ -466,34 +445,31 @@
     </div>
     <div class="popup-row">
       <span class="popup-label">Status</span>
-      <span class="popup-value" style="color:#16a34a;">● Active</span>
+      <span class="popup-value" style="color:#16a34a;"> Active</span>
     </div>
     <div class="popup-divider"></div>
     <div class="popup-code" id="popupCode"></div>
-    <button class="btn-redeem" onclick="confirmRedeem()">✓ Redeem Voucher</button>
+    <button class="btn-redeem" onclick="confirmRedeem()"> Redeem Voucher</button>
     <button class="btn-cancel" onclick="cancelRedeem()">Cancel</button>
   </div>
 </div>
 
-<!-- ERROR POPUP -->
 <div id="errorOverlay">
   <div id="errorCard">
-    <div class="error-icon">⚠️</div>
+    <div class="error-icon"></div>
     <div class="error-msg" id="errorMsg"></div>
     <button class="btn-ok" onclick="closeError()">OK</button>
   </div>
 </div>
 
-<!-- SUCCESS OVERLAY -->
 <div id="successOverlay">
   <div id="successCard">
-    <div class="success-icon">✅</div>
+    <div class="success-icon"></div>
     <div class="success-title">Redeemed!</div>
     <div class="success-sub" id="successSub"></div>
   </div>
 </div>
 
-<!-- SESSION SUMMARY -->
 <div id="summaryOverlay">
   <div id="summaryCard">
     <div class="summary-header">Session Summary</div>
@@ -507,19 +483,16 @@
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════
-     JAVASCRIPT
-════════════════════════════════════════ -->
 <script>
   const GAS_URL = "https://script.google.com/macros/s/AKfycby7qSLPRLeXOARFDx2oyEOO-7jLChoT9BD8ddT2VvLvn2DYX0_icmM0WspYjtBalvvj/exec";
-
-  // ── State ──
+  
+  // State 
   let currentUser   = "";
   let currentBranch = "";
   let sessionId     = "";
-  let sessionLog    = [];         // combined log for summary
-  let promoHistory  = [];         // promo mode session history
-  let allPromos     = [];         // loaded from GAS
+  let sessionLog    = []; // combined log for summary
+  let promoHistory  = []; // promo mode session history
+  let allPromos     = []; // loaded from GAS
   let currentMode   = "voucher";  // "voucher" | "promo"
 
   // Voucher scan state
@@ -529,18 +502,26 @@
   let pendingCode   = null;
   let pendingMethod = "scan";
 
-  // ── Utilities ──
+  // Utilities 
   function showScreen(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
   }
 
+  // --- THIS FUNCTION HAS BEEN UPDATED ---
   async function callGAS(action, params) {
-    const url = GAS_URL + '?action=' + encodeURIComponent(action) + '&payload=' + encodeURIComponent(JSON.stringify(params)) + '&t=' + Date.now();
-    const res = await fetch(url, {
-      method: 'GET',
-      redirect: 'follow'
+    // Package the action and params exactly as doPost expects
+    const payload = { action: action, ...params };
+    
+    const res = await fetch(GAS_URL, {
+      method: 'POST',
+      redirect: 'follow',
+      headers: {
+        'Content-Type': 'text/plain;charset=utf-8' 
+      },
+      body: JSON.stringify(payload)
     });
+    
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const text = await res.text();
     try {
@@ -550,8 +531,7 @@
     }
   }
 
-
-  // ── LOGIN ──
+  // LOGIN 
   async function login() {
     const code = document.getElementById('passcode').value;
     document.getElementById('loginStatus').innerText = "Checking...";
@@ -573,7 +553,6 @@
         document.getElementById('userDisplay').innerText  = currentUser;
         document.getElementById('branchDisplay').innerText = currentBranch;
         document.getElementById('sessionCount').innerText = '0';
-
         // Load promos in background
         loadPromoData();
         switchMode('voucher');
@@ -595,17 +574,17 @@
     showScreen('loginScreen');
   }
 
-  // ── MODE SWITCH ──
+  // MODE SWITCH 
   function switchMode(mode) {
     currentMode = mode;
     document.getElementById('tabVoucher').classList.toggle('active', mode === 'voucher');
     document.getElementById('tabPromo').classList.toggle('active', mode === 'promo');
     document.getElementById('voucherDash').classList.toggle('hidden', mode !== 'voucher');
     document.getElementById('promoDash').classList.toggle('hidden', mode !== 'promo');
-    document.getElementById('sessionIcon').innerText = mode === 'voucher' ? '🎫' : '📋';
+    document.getElementById('sessionIcon').innerText = mode === 'voucher' ? '' : '';
   }
 
-  // ── LOAD PROMO DATA ──
+  // LOAD PROMO DATA 
   async function loadPromoData() {
     try {
       const data = await callGAS('getActivePromos', {});
@@ -615,9 +594,7 @@
     }
   }
 
-  // ════════════════════════════════
-  //   VOUCHER MODE
-  // ════════════════════════════════
+  // VOUCHER MODE
   function openScanner() {
     showScreen('scannerScreen');
     document.getElementById('scanStatus').innerText = "Starting camera...";
@@ -642,8 +619,8 @@
     })
     .catch(err => {
       document.getElementById('scanStatus').innerHTML =
-        `⚠️ Camera blocked (${err.name})<br>Go to <b>Settings → Safari → Camera → Allow</b><br><br>
-        <button onclick="startCamera()" class="btn-red" style="font-size:14px;padding:10px;">🔄 Try Again</button>`;
+        ` Camera blocked (${err.name})<br>Go to <b>Settings  Safari  Camera  Allow</b><br><br>
+        <button onclick="startCamera()" class="btn-red" style="font-size:14px;padding:10px;"> Try Again</button>`;
     });
   }
 
@@ -765,16 +742,13 @@
     pendingCode = null;
   }
 
-  // ════════════════════════════════
-  //   PROMO MODE
-  // ════════════════════════════════
+  // PROMO MODE
   function handleLocationChange() {
     const raw = document.getElementById('locationSelect').value;
     if (!raw) return;
     const selText   = raw.split('|').join("").toLowerCase().replace(/[^a-z0-9]/g,"");
     const staffText = currentBranch.toLowerCase().replace(/[^a-z0-9]/g,"");
     const warnDiv   = document.getElementById('branchWarning');
-
     if (staffText.includes("hq") || staffText.includes("head")) {
       warnDiv.classList.add('hidden');
     } else if (!staffText.includes(selText) && !selText.includes(staffText)) {
@@ -793,7 +767,6 @@
     const catSelect = document.getElementById('category');
     document.getElementById('promo').innerHTML = '<option value="">Waiting for category...</option>';
     document.getElementById('promo').disabled  = true;
-
     const filtered = allPromos.filter(d => {
       const dbBrand    = d.brand.toLowerCase().trim();
       const dbBranch   = d.branch.toLowerCase().trim();
@@ -801,12 +774,11 @@
       const tgtBranch  = selBranch.toLowerCase().trim();
       return dbBrand.includes(tgtBrand) && (dbBranch.includes(tgtBranch) || dbBranch === 'main branch' || dbBranch.includes('all'));
     });
-
     if (filtered.length === 0) { alert("No active promotions for this location."); return; }
 
     catSelect.innerHTML  = '<option value="" disabled selected>Select Category...</option>';
     catSelect.innerHTML += '<option value="ALL">Show All Promotions</option>';
-    catSelect.innerHTML += '<option disabled>──────────</option>';
+    catSelect.innerHTML += '<option disabled></option>';
 
     [...new Set(filtered.map(i => i.category))].filter(c => c !== "").forEach(c => {
       const opt = document.createElement('option');
@@ -830,9 +802,9 @@
       const brandMatch  = dbBrand.includes(tgtBrand);
       const branchMatch = dbBranch.includes(tgtBranch) || dbBranch === 'main branch' || dbBranch.includes('all');
       const catMatch    = (selCat === "ALL") ? true : (d.category === selCat);
+ 
       return brandMatch && branchMatch && catMatch;
     });
-
     promoSelect.innerHTML = '<option value="" disabled selected>Select Promotion...</option>';
     items.forEach(p => {
       const opt = document.createElement('option');
@@ -863,18 +835,15 @@
     const promo    = document.getElementById('promo').value;
     let   invoice  = document.getElementById('invoice').value;
     const keep     = document.getElementById('keepReceiptCb').checked;
-
     if (!raw || !category || !promo) { alert("Please complete Location, Category, and Promotion."); return; }
     if (!invoice || invoice.trim() === "") invoice = "-";
 
     document.getElementById('btnSubmit').classList.add('hidden');
     document.getElementById('promoLoader').classList.remove('hidden');
-
     try {
       const res = await callGAS('saveRedemption', {
         form: { branch: raw, category, promo, invoice, staffName: currentUser, assignedBranch: currentBranch }
       });
-
       document.getElementById('btnSubmit').classList.remove('hidden');
       document.getElementById('promoLoader').classList.add('hidden');
 
@@ -885,10 +854,9 @@
 
         // Update promo history
         const timeNow     = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        const shortInvoice = invoice === "-" ? "" : `🧾 ${invoice}`;
+        const shortInvoice = invoice === "-" ? "" : ` ${invoice}`;
         promoHistory.unshift({ time: timeNow, promo, receipt: shortInvoice });
         renderPromoHistory();
-
         const statusEl = document.getElementById('promoStatus');
         statusEl.classList.remove('hidden');
         setTimeout(() => statusEl.classList.add('hidden'), 3000);
@@ -927,9 +895,7 @@
       </div>`).join('');
   }
 
-  // ════════════════════════════════
-  //   SHARED UTILITIES
-  // ════════════════════════════════
+  // SHARED UTILITIES
   function updateSessionCount() {
     document.getElementById('sessionCount').innerText = sessionLog.length;
   }
@@ -973,7 +939,7 @@
               <div>
                 <div class="promo">${v.promoName}</div>
                 <div class="code">${v.code}</div>
-                <span class="method-tag">${v.method === 'manual' ? '⌨️ Manual' : '📷 Scanned'}</span>
+                <span class="method-tag">${v.method === 'manual' ? ' Manual' : ' Scanned'}</span>
                 <span class="type-tag voucher">Voucher</span>
               </div>
               <span class="brand-tag">${v.brand}</span>
