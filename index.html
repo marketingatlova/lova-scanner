@@ -190,7 +190,7 @@
     .btn-redeem {
       background: #d32e30; color: #fff; border-radius: 14px;
       padding: 17px; font-weight: 800; border: none; width: 100%;
-      font-size: 17px; cursor: pointer; margin-top: 6px;
+      font-size: 17px; cursor: margin-top: 6px;
     }
     .btn-cancel {
       background: #f1f1f1; color: #555; border-radius: 14px;
@@ -484,7 +484,8 @@
 </div>
 
 <script>
-  const GAS_URL = "https://script.google.com/macros/s/AKfycbysEwgrqz9dG5DDo2LgrcebeKJu4wejIIW1jr3V5mwtvZRHnvdDuR38NmGIC2GceRo1/exec";
+  // THIS IS THE CORRECT URL THAT LINKS TO YOUR NEW V30 FIX
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbzKbbSF3uVnDqjBNolLRxKVmTYX4mkyAIqwMhJplYJS4KrGq0Z52Y3TqY-ZJ0eE5iZX/exec";
   
   // State 
   let currentUser   = "";
@@ -508,7 +509,6 @@
     document.getElementById(id).classList.add('active');
   }
 
-  // UPDATED callGAS (Uses GET to bypass iOS Safari POST issues)
   async function callGAS(action, params) {
     const url = GAS_URL + '?action=' + encodeURIComponent(action) + '&payload=' + encodeURIComponent(JSON.stringify(params)) + '&t=' + Date.now();
     
@@ -548,7 +548,7 @@
         document.getElementById('userDisplay').innerText  = currentUser;
         document.getElementById('branchDisplay').innerText = currentBranch;
         document.getElementById('sessionCount').innerText = '0';
-        // Load promos in background
+        
         loadPromoData();
         switchMode('voucher');
         showScreen('dash');
@@ -737,14 +737,18 @@
     pendingCode = null;
   }
 
-  // PROMO MODE
+  // PROMO MODE - FIXED LOCATION MATCHING
   function handleLocationChange() {
     const raw = document.getElementById('locationSelect').value;
     if (!raw) return;
-    const selText   = raw.split('|').join("").toLowerCase().replace(/[^a-z0-9]/g,"");
+    
+    // Completely fuzzy matching that ignores all pipes, hyphens, and spaces
+    const selText   = raw.toLowerCase().replace(/[^a-z0-9]/g,"");
     const staffText = currentBranch.toLowerCase().replace(/[^a-z0-9]/g,"");
     const warnDiv   = document.getElementById('branchWarning');
-    if (staffText.includes("hq") || staffText.includes("head")) {
+    
+    // Check if the current user belongs to HQ or Head Office
+    if (staffText.includes("hq") || staffText.includes("head") || staffText.includes("office")) {
       warnDiv.classList.add('hidden');
     } else if (!staffText.includes(selText) && !selText.includes(staffText)) {
       document.getElementById('warningText').innerText = `Note: You are assigned to ${currentBranch}.`;
@@ -752,6 +756,7 @@
     } else {
       warnDiv.classList.add('hidden');
     }
+    
     loadCategories();
   }
 
@@ -762,13 +767,19 @@
     const catSelect = document.getElementById('category');
     document.getElementById('promo').innerHTML = '<option value="">Waiting for category...</option>';
     document.getElementById('promo').disabled  = true;
+    
     const filtered = allPromos.filter(d => {
       const dbBrand    = d.brand.toLowerCase().trim();
       const dbBranch   = d.branch.toLowerCase().trim();
       const tgtBrand   = selBrand.toLowerCase().trim();
       const tgtBranch  = selBranch.toLowerCase().trim();
-      return dbBrand.includes(tgtBrand) && (dbBranch.includes(tgtBranch) || dbBranch === 'main branch' || dbBranch.includes('all'));
+      
+      const normDbBranch = dbBranch.replace(/[^a-z0-9]/g, "");
+      const normTgtBranch = tgtBranch.replace(/[^a-z0-9]/g, "");
+
+      return dbBrand.includes(tgtBrand) && (normDbBranch.includes(normTgtBranch) || dbBranch === 'main branch' || dbBranch.includes('all'));
     });
+    
     if (filtered.length === 0) { alert("No active promotions for this location."); return; }
 
     catSelect.innerHTML  = '<option value="" disabled selected>Select Category...</option>';
@@ -794,12 +805,17 @@
       const dbBranch  = d.branch.toLowerCase().trim();
       const tgtBrand  = selBrand.toLowerCase().trim();
       const tgtBranch = selBranch.toLowerCase().trim();
+      
+      const normDbBranch = dbBranch.replace(/[^a-z0-9]/g, "");
+      const normTgtBranch = tgtBranch.replace(/[^a-z0-9]/g, "");
+
       const brandMatch  = dbBrand.includes(tgtBrand);
-      const branchMatch = dbBranch.includes(tgtBranch) || dbBranch === 'main branch' || dbBranch.includes('all');
+      const branchMatch = normDbBranch.includes(normTgtBranch) || dbBranch === 'main branch' || dbBranch.includes('all');
       const catMatch    = (selCat === "ALL") ? true : (d.category === selCat);
  
       return brandMatch && branchMatch && catMatch;
     });
+    
     promoSelect.innerHTML = '<option value="" disabled selected>Select Promotion...</option>';
     items.forEach(p => {
       const opt = document.createElement('option');
@@ -830,11 +846,13 @@
     const promo    = document.getElementById('promo').value;
     let   invoice  = document.getElementById('invoice').value;
     const keep     = document.getElementById('keepReceiptCb').checked;
+    
     if (!raw || !category || !promo) { alert("Please complete Location, Category, and Promotion."); return; }
     if (!invoice || invoice.trim() === "") invoice = "-";
 
     document.getElementById('btnSubmit').classList.add('hidden');
     document.getElementById('promoLoader').classList.remove('hidden');
+    
     try {
       const res = await callGAS('saveRedemption', {
         form: { branch: raw, category, promo, invoice, staffName: currentUser, assignedBranch: currentBranch }
@@ -843,15 +861,14 @@
       document.getElementById('promoLoader').classList.add('hidden');
 
       if (res.success) {
-        // Update session log
         sessionLog.push({ type: 'promo', promoName: promo, brand: raw.split('|')[0] });
         updateSessionCount();
 
-        // Update promo history
         const timeNow     = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         const shortInvoice = invoice === "-" ? "" : ` ${invoice}`;
         promoHistory.unshift({ time: timeNow, promo, receipt: shortInvoice });
         renderPromoHistory();
+        
         const statusEl = document.getElementById('promoStatus');
         statusEl.classList.remove('hidden');
         setTimeout(() => statusEl.classList.add('hidden'), 3000);
@@ -890,7 +907,6 @@
       </div>`).join('');
   }
 
-  // SHARED UTILITIES
   function updateSessionCount() {
     document.getElementById('sessionCount').innerText = sessionLog.length;
   }
