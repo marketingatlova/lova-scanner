@@ -190,7 +190,7 @@
     .btn-redeem {
       background: #d32e30; color: #fff; border-radius: 14px;
       padding: 17px; font-weight: 800; border: none; width: 100%;
-      font-size: 17px; cursor: margin-top: 6px;
+      font-size: 17px; cursor: pointer; margin-top: 6px;
     }
     .btn-cancel {
       background: #f1f1f1; color: #555; border-radius: 14px;
@@ -241,7 +241,7 @@
     #summaryCard {
       background: #fff; border-radius: 24px 24px 0 0;
       padding: 28px 24px 40px; width: 100%; max-width: 480px;
-      max-height: 80vh; overflow-y: auto; animation: slideUp .3s ease;
+      max-height: 88vh; overflow-y: auto; animation: slideUp .3s ease;
     }
     .summary-header { font-size: 19px; font-weight: 800; color: #1a1a1a; margin-bottom: 3px; }
     .summary-sub    { font-size: 13px; color: #888; margin-bottom: 18px; }
@@ -265,6 +265,60 @@
       padding: 15px; font-weight: 800; border: none; width: 100%;
       font-size: 15px; cursor: pointer; margin-top: 18px;
     }
+
+    /* ── SCOREBOARD ─────────────────────────────────── */
+    .scoreboard-section {
+      margin-bottom: 20px;
+    }
+    .scoreboard-title {
+      font-size: 10px; text-transform: uppercase; font-weight: 700;
+      color: #9ca3af; letter-spacing: .6px;
+      margin-bottom: 10px; display: flex; align-items: center; gap: 6px;
+    }
+    .scoreboard-title::after {
+      content: ''; flex: 1; height: 1px; background: #f0f0f0;
+    }
+
+    /* One card per brand */
+    .brand-score-card {
+      background: #fafafa;
+      border: 1px solid #f0f0f0;
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin-bottom: 8px;
+    }
+    .brand-score-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 10px;
+    }
+    .brand-score-name {
+      font-size: 13px; font-weight: 800; color: #1a1a1a; text-transform: uppercase; letter-spacing: .3px;
+    }
+    .brand-score-total {
+      font-size: 13px; font-weight: 800; color: #d32e30;
+      background: #fef2f2; padding: 3px 10px; border-radius: 20px;
+    }
+
+    /* Branch rows inside a brand card */
+    .branch-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 5px 0;
+    }
+    .branch-row-name {
+      font-size: 11px; color: #6b7280; font-weight: 500;
+      min-width: 110px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .branch-bar-wrap {
+      flex: 1; background: #eeeeee; border-radius: 99px; height: 6px; overflow: hidden;
+    }
+    .branch-bar-fill {
+      height: 100%; border-radius: 99px; background: #d32e30;
+      transition: width .4s ease;
+    }
+    .branch-bar-count {
+      font-size: 11px; font-weight: 700; color: #374151; min-width: 18px; text-align: right;
+    }
+    /* ── END SCOREBOARD ────────────────────────────── */
 
     /* Status msg (promo mode)  */
     .status-saved {
@@ -355,9 +409,10 @@
       <select class="form-select" id="locationSelect" onchange="handleLocationChange()">
         <option value="" disabled selected>Select Location...</option>
         <option value="LAVA|Main Branch">LAVA (Thong Lo)</option>
-        <option value="HOLY BELLY|Main Branch">HOLY BELLY</option>
+        <option value="Holy Belly|Main Branch">HOLY BELLY</option>
         <option disabled></option>
         <option value="BIANCA|ICONSIAM">Bianca – ICONSIAM</option>
+        <option value="BIANCA|Icon Siam">Bianca – Icon Siam</option>
         <option value="BIANCA|Siam Paragon">Bianca – Siam Paragon</option>
         <option value="BIANCA|Emsphere">Bianca – Emsphere</option>
         <option value="BIANCA|One Bangkok">Bianca – One Bangkok</option>
@@ -474,27 +529,34 @@
   <div id="summaryCard">
     <div class="summary-header">Session Summary</div>
     <div class="summary-sub" id="summaryStaff"></div>
+
     <div class="summary-total">
       <div class="num" id="summaryTotal">0</div>
       <div class="lbl">TOTAL RECORDS THIS SESSION</div>
     </div>
+
+    <div class="scoreboard-section" id="scoreboardSection" style="display:none;">
+      <div class="scoreboard-title">Breakdown by Brand &amp; Branch</div>
+      <div id="scoreboardCards"></div>
+    </div>
+    <div id="summaryLogLabel" style="font-size:10px;text-transform:uppercase;font-weight:700;color:#9ca3af;letter-spacing:.6px;margin-bottom:10px;display:none;">All Records</div>
     <div id="summaryList"></div>
+
     <button class="btn-close-summary" onclick="closeSummary()">Close</button>
   </div>
 </div>
 
 <script>
-  // THIS IS THE CORRECT URL THAT LINKS TO YOUR NEW V30 FIX
   const GAS_URL = "https://script.google.com/macros/s/AKfycbzKbbSF3uVnDqjBNolLRxKVmTYX4mkyAIqwMhJplYJS4KrGq0Z52Y3TqY-ZJ0eE5iZX/exec";
-  
-  // State 
+
+  // State
   let currentUser   = "";
   let currentBranch = "";
   let sessionId     = "";
-  let sessionLog    = []; 
-  let promoHistory  = []; 
-  let allPromos     = []; 
-  let currentMode   = "voucher";  
+  let sessionLog    = [];
+  let promoHistory  = [];
+  let allPromos     = [];
+  let currentMode   = "voucher";
 
   // Voucher scan state
   let videoStream   = null;
@@ -503,30 +565,24 @@
   let pendingCode   = null;
   let pendingMethod = "scan";
 
-  // Utilities 
+  // ── Utilities ──────────────────────────────────────
   function showScreen(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
   }
 
   async function callGAS(action, params) {
-    const url = GAS_URL + '?action=' + encodeURIComponent(action) + '&payload=' + encodeURIComponent(JSON.stringify(params)) + '&t=' + Date.now();
-    
-    const res = await fetch(url, {
-      method: 'GET',
-      redirect: 'follow'
-    });
-    
+    const url = GAS_URL + '?action=' + encodeURIComponent(action)
+      + '&payload=' + encodeURIComponent(JSON.stringify(params))
+      + '&t=' + Date.now();
+    const res = await fetch(url, { method: 'GET', redirect: 'follow' });
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const text = await res.text();
-    try {
-      return JSON.parse(text);
-    } catch(parseErr) {
-      throw new Error('Parse fail: ' + text.substring(0, 120));
-    }
+    try { return JSON.parse(text); }
+    catch(e) { throw new Error('Parse fail: ' + text.substring(0,120)); }
   }
 
-  // LOGIN 
+  // ── LOGIN ──────────────────────────────────────────
   async function login() {
     const code = document.getElementById('passcode').value;
     document.getElementById('loginStatus').innerText = "Checking...";
@@ -541,14 +597,14 @@
           String(now.getDate()).padStart(2,'0') + '-' +
           String(now.getHours()).padStart(2,'0') +
           String(now.getMinutes()).padStart(2,'0');
-        sessionId  = `${currentUser.toUpperCase().replace(/\s/g,'-')}-${stamp}`;
-        sessionLog = [];
+        sessionId    = `${currentUser.toUpperCase().replace(/\s/g,'-')}-${stamp}`;
+        sessionLog   = [];
         promoHistory = [];
 
-        document.getElementById('userDisplay').innerText  = currentUser;
+        document.getElementById('userDisplay').innerText   = currentUser;
         document.getElementById('branchDisplay').innerText = currentBranch;
-        document.getElementById('sessionCount').innerText = '0';
-        
+        document.getElementById('sessionCount').innerText  = '0';
+
         loadPromoData();
         switchMode('voucher');
         showScreen('dash');
@@ -569,7 +625,7 @@
     showScreen('loginScreen');
   }
 
-  // MODE SWITCH 
+  // ── MODE SWITCH ────────────────────────────────────
   function switchMode(mode) {
     currentMode = mode;
     document.getElementById('tabVoucher').classList.toggle('active', mode === 'voucher');
@@ -579,17 +635,18 @@
     document.getElementById('sessionIcon').innerText = mode === 'voucher' ? '🎫' : '📋';
   }
 
-  // LOAD PROMO DATA 
+  // ── LOAD PROMO DATA (FIXED FOR V31 BACKEND) ────────
   async function loadPromoData() {
     try {
-      const data = await callGAS('getActivePromos', {});
-      allPromos = data;
-    } catch(e) {
-      console.error('Failed to load promos', e);
+      const res = await callGAS('getActivePromos', {});
+      // Safely unpack data whether the server sends an array or an object
+      allPromos = Array.isArray(res) ? res : (res.data || []);
+    } catch(e) { 
+      console.error('Failed to load promos', e); 
     }
   }
 
-  // VOUCHER MODE
+  // ── VOUCHER MODE ───────────────────────────────────
   function openScanner() {
     showScreen('scannerScreen');
     document.getElementById('scanStatus').innerText = "Starting camera...";
@@ -614,7 +671,7 @@
     })
     .catch(err => {
       document.getElementById('scanStatus').innerHTML =
-        `⚠️ Camera blocked (${err.name})<br>Go to <b>Settings  Safari  Camera  Allow</b><br><br>
+        `⚠️ Camera blocked (${err.name})<br>Go to <b>Settings › Safari › Camera › Allow</b><br><br>
         <button onclick="startCamera()" class="btn-red" style="font-size:14px;padding:10px;"> Try Again</button>`;
     });
   }
@@ -721,7 +778,14 @@
         branch:      currentBranch
       });
       if (res.success) {
-        sessionLog.push({ type: 'voucher', code: pendingCode, promoName: res.promoName, brand: res.brand, method: pendingMethod });
+        sessionLog.push({
+          type: 'voucher',
+          code: pendingCode,
+          promoName: res.promoName,
+          brand: res.brand,
+          branch: currentBranch,
+          method: pendingMethod
+        });
         updateSessionCount();
         showSuccess(res.message);
         if (pendingMethod === "manual") {
@@ -737,17 +801,13 @@
     pendingCode = null;
   }
 
-  // PROMO MODE - FIXED LOCATION MATCHING
+  // ── PROMO MODE ─────────────────────────────────────
   function handleLocationChange() {
     const raw = document.getElementById('locationSelect').value;
     if (!raw) return;
-    
-    // Completely fuzzy matching that ignores all pipes, hyphens, and spaces
     const selText   = raw.toLowerCase().replace(/[^a-z0-9]/g,"");
     const staffText = currentBranch.toLowerCase().replace(/[^a-z0-9]/g,"");
     const warnDiv   = document.getElementById('branchWarning');
-    
-    // Check if the current user belongs to HQ or Head Office
     if (staffText.includes("hq") || staffText.includes("head") || staffText.includes("office")) {
       warnDiv.classList.add('hidden');
     } else if (!staffText.includes(selText) && !selText.includes(staffText)) {
@@ -756,7 +816,6 @@
     } else {
       warnDiv.classList.add('hidden');
     }
-    
     loadCategories();
   }
 
@@ -767,25 +826,19 @@
     const catSelect = document.getElementById('category');
     document.getElementById('promo').innerHTML = '<option value="">Waiting for category...</option>';
     document.getElementById('promo').disabled  = true;
-    
     const filtered = allPromos.filter(d => {
       const dbBrand    = d.brand.toLowerCase().trim();
       const dbBranch   = d.branch.toLowerCase().trim();
       const tgtBrand   = selBrand.toLowerCase().trim();
       const tgtBranch  = selBranch.toLowerCase().trim();
-      
-      const normDbBranch = dbBranch.replace(/[^a-z0-9]/g, "");
+      const normDbBranch  = dbBranch.replace(/[^a-z0-9]/g, "");
       const normTgtBranch = tgtBranch.replace(/[^a-z0-9]/g, "");
-
       return dbBrand.includes(tgtBrand) && (normDbBranch.includes(normTgtBranch) || dbBranch === 'main branch' || dbBranch.includes('all'));
     });
-    
     if (filtered.length === 0) { alert("No active promotions for this location."); return; }
-
     catSelect.innerHTML  = '<option value="" disabled selected>Select Category...</option>';
     catSelect.innerHTML += '<option value="ALL">Show All Promotions</option>';
     catSelect.innerHTML += '<option disabled></option>';
-
     [...new Set(filtered.map(i => i.category))].filter(c => c !== "").forEach(c => {
       const opt = document.createElement('option');
       opt.value = c; opt.innerHTML = c;
@@ -799,23 +852,18 @@
     const [selBrand, selBranch] = raw.split('|');
     const selCat = document.getElementById('category').value;
     const promoSelect = document.getElementById('promo');
-
     const items = allPromos.filter(d => {
       const dbBrand   = d.brand.toLowerCase().trim();
       const dbBranch  = d.branch.toLowerCase().trim();
       const tgtBrand  = selBrand.toLowerCase().trim();
       const tgtBranch = selBranch.toLowerCase().trim();
-      
-      const normDbBranch = dbBranch.replace(/[^a-z0-9]/g, "");
+      const normDbBranch  = dbBranch.replace(/[^a-z0-9]/g, "");
       const normTgtBranch = tgtBranch.replace(/[^a-z0-9]/g, "");
-
       const brandMatch  = dbBrand.includes(tgtBrand);
       const branchMatch = normDbBranch.includes(normTgtBranch) || dbBranch === 'main branch' || dbBranch.includes('all');
       const catMatch    = (selCat === "ALL") ? true : (d.category === selCat);
- 
       return brandMatch && branchMatch && catMatch;
     });
-    
     promoSelect.innerHTML = '<option value="" disabled selected>Select Promotion...</option>';
     items.forEach(p => {
       const opt = document.createElement('option');
@@ -846,29 +894,30 @@
     const promo    = document.getElementById('promo').value;
     let   invoice  = document.getElementById('invoice').value;
     const keep     = document.getElementById('keepReceiptCb').checked;
-    
     if (!raw || !category || !promo) { alert("Please complete Location, Category, and Promotion."); return; }
     if (!invoice || invoice.trim() === "") invoice = "-";
 
+    // Parse brand + branch from the select value
+    const [selBrand, selBranch] = raw.split('|');
+
     document.getElementById('btnSubmit').classList.add('hidden');
     document.getElementById('promoLoader').classList.remove('hidden');
-    
     try {
       const res = await callGAS('saveRedemption', {
         form: { branch: raw, category, promo, invoice, staffName: currentUser, assignedBranch: currentBranch }
       });
       document.getElementById('btnSubmit').classList.remove('hidden');
       document.getElementById('promoLoader').classList.add('hidden');
-
       if (res.success) {
-        sessionLog.push({ type: 'promo', promoName: promo, brand: raw.split('|')[0] });
+        // Store brand AND branch in the log entry
+        sessionLog.push({ type: 'promo', promoName: promo, brand: selBrand, branch: selBranch });
         updateSessionCount();
 
-        const timeNow     = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const timeNow      = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         const shortInvoice = invoice === "-" ? "" : ` ${invoice}`;
         promoHistory.unshift({ time: timeNow, promo, receipt: shortInvoice });
         renderPromoHistory();
-        
+
         const statusEl = document.getElementById('promoStatus');
         statusEl.classList.remove('hidden');
         setTimeout(() => statusEl.classList.add('hidden'), 3000);
@@ -911,6 +960,62 @@
     document.getElementById('sessionCount').innerText = sessionLog.length;
   }
 
+  // ── SCOREBOARD BUILDER ─────────────────────────────
+  function buildScoreboard() {
+    const map = {};
+    sessionLog.forEach(entry => {
+      const brand  = (entry.brand  || "Unknown").toUpperCase();
+      const branch = (entry.branch || "Unknown");
+      if (!map[brand]) map[brand] = {};
+      map[brand][branch] = (map[brand][branch] || 0) + 1;
+    });
+    return map;
+  }
+
+  function renderScoreboard() {
+    const section = document.getElementById('scoreboardSection');
+    const cards   = document.getElementById('scoreboardCards');
+
+    if (sessionLog.length === 0) {
+      section.style.display = 'none';
+      return;
+    }
+    section.style.display = 'block';
+
+    const map = buildScoreboard();
+    const brands = Object.keys(map).sort();
+
+    cards.innerHTML = brands.map(brand => {
+      const branches    = map[brand];
+      const branchNames = Object.keys(branches).sort();
+      const brandTotal  = branchNames.reduce((s, b) => s + branches[b], 0);
+      const maxCount    = Math.max(...branchNames.map(b => branches[b]));
+
+      const rowsHtml = branchNames.map(b => {
+        const count = branches[b];
+        const pct   = maxCount > 0 ? Math.round((count / maxCount) * 100) : 0;
+        return `
+          <div class="branch-row">
+            <div class="branch-row-name">${b}</div>
+            <div class="branch-bar-wrap">
+              <div class="branch-bar-fill" style="width:${pct}%"></div>
+            </div>
+            <div class="branch-bar-count">${count}</div>
+          </div>`;
+      }).join('');
+
+      return `
+        <div class="brand-score-card">
+          <div class="brand-score-header">
+            <div class="brand-score-name">${brand}</div>
+            <div class="brand-score-total">${brandTotal} redemption${brandTotal !== 1 ? 's' : ''}</div>
+          </div>
+          ${rowsHtml}
+        </div>`;
+    }).join('');
+  }
+  // ── END SCOREBOARD ─────────────────────────────────
+
   function showError(msg) {
     document.getElementById('errorMsg').innerText = msg;
     document.getElementById('errorOverlay').classList.add('show');
@@ -939,10 +1044,19 @@
   function showSummary() {
     document.getElementById('summaryStaff').innerText = `Staff: ${currentUser}`;
     document.getElementById('summaryTotal').innerText = sessionLog.length;
-    const list = document.getElementById('summaryList');
+
+    // Render scoreboard
+    renderScoreboard();
+
+    // Render log
+    const list      = document.getElementById('summaryList');
+    const logLabel  = document.getElementById('summaryLogLabel');
+
     if (sessionLog.length === 0) {
       list.innerHTML = `<div style="text-align:center;color:#bbb;padding:20px;font-size:14px;">No records yet this session.</div>`;
+      logLabel.style.display = 'none';
     } else {
+      logLabel.style.display = 'block';
       list.innerHTML = sessionLog.map(v => {
         if (v.type === 'voucher') {
           return `
