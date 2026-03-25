@@ -213,9 +213,12 @@
       <select class="form-select" id="category" disabled onchange="loadPromos()"><option value="">Waiting for location...</option></select>
 
       <label class="form-label-sm">Promotion</label>
-      <select class="form-select" id="promo" disabled><option value="">Waiting for category...</option></select>
-
-      <div style="text-align:center;margin-bottom:6px;">
+      <select class="form-select" id="promo" disabled onchange="handlePromoChange()"><option value="">Waiting for category...</option></select>
+      
+      <div style="text-align: center; margin-top: -6px; margin-bottom: 8px;">
+        <a onclick="openPromoDetails()" id="btnViewPromoDetails" class="optional-link hidden">🔍 View Promotion Details</a>
+      </div>
+      <div style="text-align:center;margin-bottom:12px;">
         <a onclick="toggleInvoice()" id="toggleInvBtn" class="optional-link">➕ Add Receipt No. (Optional)</a>
         <input type="text" class="form-control hidden" id="invoice" placeholder="e.g. INV-1023" style="margin-top:8px;height:50px;">
       </div>
@@ -261,6 +264,52 @@
     <div id="manualStatus" class="text-center mt-3" style="font-weight:700;color:#d32e30;font-size:14px;"></div>
     <button onclick="showScreen('dash')" class="btn-gray">⬅️ Back to Menu</button>
   </div>
+
+  <div id="promoDetailsScreen" class="screen card">
+    <div class="header-row" style="margin-bottom: 24px;">
+      <div class="lova-title" style="font-size: 18px; margin-bottom: 0; text-align: left;">PROMOTION DETAILS</div>
+    </div>
+
+    <div id="detailImageContainer" style="display:none; text-align:center; margin-bottom:18px;">
+      <img id="detailImage" src="" style="max-width:100%; border-radius:12px; border: 1.5px solid #e5e7eb;">
+    </div>
+
+    <label class="form-label-sm">Target Location</label>
+    <input type="text" id="detailLocation" class="form-control" style="background:#fff;" readonly>
+
+    <label class="form-label-sm">Categories</label>
+    <input type="text" id="detailCategory" class="form-control" style="background:#fff;" readonly>
+
+    <div style="display: flex; gap: 12px;">
+      <div style="flex: 1;">
+        <label class="form-label-sm">Valid From</label>
+        <input type="text" id="detailValidFrom" class="form-control" style="background:#fff;" readonly>
+      </div>
+      <div style="flex: 1;">
+        <label class="form-label-sm">Days Left</label>
+        <input type="text" id="detailDaysLeft" class="form-control" style="background:#fff; font-weight:700;" readonly>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 12px;">
+      <div style="flex: 1;">
+        <label class="form-label-sm">Valid Until</label>
+        <input type="text" id="detailValidUntil" class="form-control" style="background:#fff;" readonly>
+      </div>
+      <div style="flex: 1;">
+        <label class="form-label-sm">Status</label>
+        <input type="text" class="form-control" style="background:#fff; color:#16a34a; font-weight:800;" value="✅ Active" readonly>
+      </div>
+    </div>
+
+    <label class="form-label-sm">Benefits & Details</label>
+    <textarea id="detailDescription" class="form-control" style="height: 140px; resize: none; background:#fff; font-size:13px;" readonly></textarea>
+
+    <a id="detailDocLink" href="#" target="_blank" class="btn-gray" style="display:none; background:#0284c7; border-color:#0284c7; text-decoration:none; text-align:center; margin-bottom: 10px;">📄 View Campaign Document</a>
+
+    <button onclick="showScreen('dash')" class="btn-gray mt-2" style="margin-top:0;">⬅️ Back to Promo Record</button>
+  </div>
+
 </div>
 
 <div id="popupOverlay">
@@ -497,7 +546,6 @@
   async function onLookup(code) {
     scanPaused = true; document.getElementById('scanStatus').innerText = 'Code found — checking...';
     try {
-      // NOTE: This successfully talks to the Voucher Database because you added the URL at the top!
       const res = await callGAS('lookupVoucher', { scannedCode: code });
       if (res.success) { pendingCode = code; document.getElementById('manualStatus').innerText = ""; showConfirmPopup(res); } 
       else { if (pendingMethod === "manual") document.getElementById('manualStatus').innerText = res.message; else showError(res.message); scanPaused = false; }
@@ -554,6 +602,7 @@
     const catSelect = document.getElementById('category');
     document.getElementById('promo').innerHTML = '<option value="">Waiting for category...</option>';
     document.getElementById('promo').disabled  = true;
+    document.getElementById('btnViewPromoDetails').classList.add('hidden');
     const filtered = allPromos.filter(d => {
       const dbBrand    = d.brand.toLowerCase().trim();
       const dbBranch   = d.branch.toLowerCase().trim();
@@ -595,6 +644,64 @@
       const opt = document.createElement('option'); opt.value = p.name; opt.innerHTML = p.name; promoSelect.appendChild(opt);
     });
     promoSelect.disabled = false;
+    document.getElementById('btnViewPromoDetails').classList.add('hidden');
+  }
+
+  // Handle showing the View Details button
+  function handlePromoChange() {
+    const detailsBtn = document.getElementById('btnViewPromoDetails');
+    if (document.getElementById('promo').value) detailsBtn.classList.remove('hidden');
+    else detailsBtn.classList.add('hidden');
+  }
+
+  // Populate and open the Promo Details Screen
+  function openPromoDetails() {
+    const promoName = document.getElementById('promo').value;
+    if (!promoName) return;
+
+    // Find the specific promo data from the array
+    const promoData = allPromos.find(p => p.name === promoName);
+    if (!promoData) {
+      alert("Detail data not loaded yet.");
+      return;
+    }
+
+    // Populate the fields
+    document.getElementById('detailLocation').value = promoData.branch || "";
+    document.getElementById('detailCategory').value = promoData.category || "";
+    document.getElementById('detailValidFrom').value = promoData.validFrom || "-";
+    document.getElementById('detailValidUntil').value = promoData.validUntil || "-";
+    
+    // Formatting days left properly
+    const daysEl = document.getElementById('detailDaysLeft');
+    daysEl.value = promoData.daysLeft !== undefined && promoData.daysLeft !== null ? promoData.daysLeft + " Days" : "-";
+    daysEl.style.color = (promoData.daysLeft !== "N/A" && promoData.daysLeft <= 3) ? "#d32e30" : "#1f2937";
+
+    document.getElementById('detailDescription').value = promoData.details || "";
+
+    // Image Handling
+    const imgContainer = document.getElementById('detailImageContainer');
+    const imgEl = document.getElementById('detailImage');
+    if (promoData.imageLink && promoData.imageLink.startsWith('http')) {
+      imgEl.src = promoData.imageLink;
+      imgContainer.style.display = 'block';
+    } else {
+      imgContainer.style.display = 'none';
+      imgEl.src = "";
+    }
+
+    // Document Link Handling
+    const docLinkBtn = document.getElementById('detailDocLink');
+    if (promoData.docLink && promoData.docLink.startsWith('http')) {
+      docLinkBtn.href = promoData.docLink;
+      docLinkBtn.style.display = 'block';
+    } else {
+      docLinkBtn.style.display = 'none';
+      docLinkBtn.href = "#";
+    }
+
+    // Show the new screen
+    showScreen('promoDetailsScreen');
   }
 
   function toggleInvoice() {
@@ -639,6 +746,7 @@
         setTimeout(() => statusEl.classList.add('hidden'), 3000);
 
         document.getElementById('promo').value = "";
+        document.getElementById('btnViewPromoDetails').classList.add('hidden');
         if (!keep) { document.getElementById('invoice').value = ""; document.getElementById('invoice').classList.add('hidden'); document.getElementById('keepReceiptDiv').classList.add('hidden'); document.getElementById('toggleInvBtn').innerText = "➕ Add Receipt No. (Optional)"; }
         
         fetchGlobalScoreboard(); 
