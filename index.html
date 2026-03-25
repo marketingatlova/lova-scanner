@@ -124,7 +124,7 @@
     .history-promo   { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 220px; }
     .history-receipt { color: #9ca3af; font-size: 11px; }
 
-    /* ── INTERACTIVE LEADERBOARD ACCORDION ── */
+    /* ── INTERACTIVE LEADERBOARD ACCORDION (WHITE DESIGN) ── */
     .lb-container { margin-top: 30px; }
     .lb-header-title { font-size: 12px; font-weight: 800; text-transform: uppercase; color: #999; letter-spacing: 1px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
     .lb-header-title::after { content: ''; flex: 1; height: 1px; background: #eee; }
@@ -296,9 +296,23 @@
   </div>
 </div>
 
+<div id="summaryOverlay">
+  <div id="summaryCard">
+    <div class="summary-header">Session Summary</div>
+    <div class="summary-sub" id="summaryStaff"></div>
+    <div class="summary-total">
+      <div class="num" id="summaryTotal">0</div>
+      <div class="lbl">TOTAL RECORDS THIS SESSION</div>
+    </div>
+    <div id="summaryLogLabel" style="font-size:10px;text-transform:uppercase;font-weight:700;color:#9ca3af;letter-spacing:.6px;margin-bottom:10px;display:none;">All Records</div>
+    <div id="summaryList"></div>
+    <button class="btn-close-summary" onclick="closeSummary()">Close</button>
+  </div>
+</div>
+
 <script>
-  // YOUR LIVE DEPLOYMENT URL
-  const GAS_URL = "https://script.google.com/macros/s/AKfycbzKbbSF3uVnDqjBNolLRxKVmTYX4mkyAIqwMhJplYJS4KrGq0Z52Y3TqY-ZJ0eE5iZX/exec";
+  // YOUR NEW LIVE DEPLOYMENT URL
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbysEwgrqz9dG5DDo2LgrcebeKJu4wejIIW1jr3V5mwtvZRHnvdDuR38NmGIC2GceRo1/exec";
   
   let currentUser   = "";
   let currentBranch = "";
@@ -385,7 +399,7 @@
     } catch(e) { console.error('Failed to load promos', e); }
   }
 
-  // ── INTERACTIVE ACCORDION LEADERBOARD ──
+  // ── INTERACTIVE ACCORDION LEADERBOARD (WHITE DESIGN) ──
   async function fetchGlobalScoreboard() {
     const container = document.getElementById('globalLeaderboardContainer');
     container.innerHTML = '<div style="text-align:center;font-size:12px;color:#888;margin-top:20px;">Fetching live leaderboard... ⏳</div>';
@@ -483,6 +497,7 @@
   async function onLookup(code) {
     scanPaused = true; document.getElementById('scanStatus').innerText = 'Code found — checking...';
     try {
+      // NOTE: This successfully talks to the Voucher Database because you added the URL at the top!
       const res = await callGAS('lookupVoucher', { scannedCode: code });
       if (res.success) { pendingCode = code; document.getElementById('manualStatus').innerText = ""; showConfirmPopup(res); } 
       else { if (pendingMethod === "manual") document.getElementById('manualStatus').innerText = res.message; else showError(res.message); scanPaused = false; }
@@ -643,6 +658,26 @@
   function showError(msg) { document.getElementById('errorMsg').innerText = msg; document.getElementById('errorOverlay').classList.add('show'); }
   function closeError() { document.getElementById('errorOverlay').classList.remove('show'); if (pendingMethod === "scan") { scanPaused = false; document.getElementById('scanStatus').innerText = "Scanning live..."; } }
   function showSuccess(msg) { document.getElementById('successSub').innerText = msg; document.getElementById('successOverlay').classList.add('show'); setTimeout(() => { document.getElementById('successOverlay').classList.remove('show'); if (pendingMethod === "scan") { scanPaused = false; document.getElementById('scanStatus').innerText = "Scanning live..."; } }, 2000); }
+
+  function showSummary() {
+    document.getElementById('summaryStaff').innerText = `Staff: ${currentUser}`; document.getElementById('summaryTotal').innerText = sessionLog.length;
+    const list      = document.getElementById('summaryList'); const logLabel  = document.getElementById('summaryLogLabel');
+    if (sessionLog.length === 0) {
+      list.innerHTML = `<div style="text-align:center;color:#bbb;padding:20px;font-size:14px;">No records yet this session.</div>`; logLabel.style.display = 'none';
+    } else {
+      logLabel.style.display = 'block';
+      list.innerHTML = sessionLog.map(v => {
+        if (v.type === 'voucher') {
+          return `<div class="summary-item"><div><div class="promo">${v.promoName}</div><div class="code">${v.code}</div><span class="method-tag">${v.method === 'manual' ? '⌨️ Manual' : '📷 Scanned'}</span><span class="type-tag voucher">Voucher</span></div><span class="brand-tag">${v.brand}</span></div>`;
+        } else {
+          return `<div class="summary-item"><div><div class="promo">${v.promoName}</div><span class="type-tag promo">Promo Record</span></div><span class="brand-tag">${v.brand}</span></div>`;
+        }
+      }).join('');
+    }
+    document.getElementById('summaryOverlay').classList.add('show');
+  }
+
+  function closeSummary() { document.getElementById('summaryOverlay').classList.remove('show'); }
 </script>
 </body>
 </html>
