@@ -25,7 +25,7 @@
     .btn-gray:active { opacity: .85; }
     .btn-logout { background: #fff; color: #d32e30; border: 1.5px solid #d32e30; border-radius: 10px; padding: 6px 14px; font-weight: 700; font-size: 12px; cursor: pointer; }
     
-    .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+    .header-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
     .header-name { font-weight: 800; color: #222; font-size: 15px; text-transform: uppercase; letter-spacing: .3px; }
     .header-branch { font-size: 11px; color: #aaa; font-weight: 500; margin-top: 1px; }
     
@@ -150,6 +150,18 @@
     
     .hidden { display: none !important; }
     hr { border-color: #f0f0f0; margin: 16px 0 20px; }
+
+    /* ── SINGLE PAGE ORDER PORTAL STYLES ── */
+    .order-step { display: none; }
+    .order-step.active { display: block; }
+    .catalog-item { background: #f9fafb; border: 1.5px solid #eee; border-radius: 12px; padding: 15px; margin-bottom: 10px; font-weight: 700; color: #333; cursor: pointer; transition: all 0.2s; display: flex; justify-content: space-between; align-items: center;}
+    .catalog-item:active { transform: scale(0.97); border-color: #d32e30; background: #fff; }
+    .order-history-card { background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:16px; margin-bottom:12px; display:flex; flex-direction:column; gap:6px; }
+    .history-top { display:flex; justify-content:space-between; align-items:center; }
+    .status-badge { font-size:11px; font-weight:800; padding:4px 8px; border-radius:8px; }
+    .badge-pending { background:#fff7ed; color:#c2410c; }
+    .badge-active { background:#eff6ff; color:#1d4ed8; }
+    .badge-closed { background:#f1f5f9; color:#64748b; }
   </style>
 </head>
 <body>
@@ -164,14 +176,19 @@
   </div>
 
   <div id="dash" class="screen card">
-    <div class="header-row">
+    <div class="header-row" style="margin-bottom: 8px;">
       <div>
         <div class="header-name" id="userDisplay"></div>
         <div class="header-branch" id="branchDisplay"></div>
       </div>
-      <button onclick="logout()" class="btn-logout">LOGOUT</button>
+      <div style="text-align: right; display: flex; flex-direction: column; gap: 6px;">
+        <button onclick="logout()" class="btn-logout">LOGOUT</button>
+        <a href="#" onclick="openOrderPortal(); return false;" style="font-size: 11px; color: #cbd5e1; font-weight: 600; text-decoration: none; letter-spacing: 0.5px;">Material Orders &gt;</a>
+      </div>
     </div>
-    <hr>
+    
+    <hr style="margin-top: 10px; margin-bottom: 20px;">
+    
     <div class="mode-tabs">
       <button class="mode-tab active" id="tabVoucher" onclick="switchMode('voucher')">🎫 Voucher</button>
       <button class="mode-tab" id="tabPromo" onclick="switchMode('promo')">📋 Promo Record</button>
@@ -241,6 +258,80 @@
 
   </div>
 
+  <div id="orderPortalScreen" class="screen card">
+    <div class="header-row" style="margin-bottom: 24px;">
+      <div class="lova-title" style="font-size: 20px; margin-bottom: 0; text-align: left; color:#d32e30; display:flex; align-items:center; gap:6px;">
+        <span style="font-size:24px;">📦</span> Material Orders
+      </div>
+      <button onclick="showScreen('dash')" class="btn-logout" style="border-color:#64748b; color:#64748b;">⬅️ BACK</button>
+    </div>
+
+    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:16px; padding:20px; margin-bottom:24px;">
+      
+      <label class="form-label-sm">Select Item</label>
+      <select class="form-select" id="orderItemSelect">
+        <option value="" disabled selected>Loading Catalog...</option>
+      </select>
+
+      <label class="form-label-sm">Delivery Branch</label>
+      <select class="form-select" id="orderBranchSelect">
+        <option value="" disabled selected>Select Delivery Branch...</option>
+        <option value="LAVA|Main Branch">LAVA (Thong Lo)</option>
+        <option value="HOLY BELLY|Main Branch">HOLY BELLY</option>
+        <option value="BIANCA|ICONSIAM">Bianca – ICONSIAM</option>
+        <option value="BIANCA|Siam Paragon">Bianca – Siam Paragon</option>
+        <option value="BIANCA|Emsphere">Bianca – Emsphere</option>
+        <option value="BIANCA|One Bangkok">Bianca – One Bangkok</option>
+        <option value="HQ">Headquarters (HQ)</option>
+      </select>
+
+      <label class="form-label-sm">Details & Quantity</label>
+      <textarea id="orderSpecs" class="form-control" style="height:80px; resize:none; padding:12px;" placeholder="Details..."></textarea>
+      
+      <div style="display:flex; flex-direction:column; gap:12px; margin-bottom:16px;">
+        <div>
+          <label class="form-label-sm">Ideal Delivery Date</label>
+          <input type="date" id="orderDate" class="form-control" style="margin-bottom:0;">
+        </div>
+        
+        <div style="display:flex; align-items:center; gap:8px; padding-top:4px;">
+          <label style="display:flex; align-items:center; gap:8px; cursor:pointer; user-select:none;">
+            <input type="checkbox" id="orderUrgent" style="display:none;" onchange="
+              const slider = this.nextElementSibling;
+              const knob = slider.firstElementChild;
+              const text = document.getElementById('urgentText');
+              if(this.checked) {
+                slider.style.background = '#d32e30';
+                knob.style.transform = 'translateX(16px)';
+                text.style.color = '#d32e30';
+              } else {
+                slider.style.background = '#cbd5e1';
+                knob.style.transform = 'translateX(0)';
+                text.style.color = '#94a3b8';
+              }
+            ">
+            <div style="width:36px; height:20px; background:#cbd5e1; border-radius:20px; position:relative; transition:0.2s;">
+              <div style="width:16px; height:16px; background:#fff; border-radius:50%; position:absolute; top:2px; left:2px; transition:0.2s; box-shadow:0 1px 3px rgba(0,0,0,0.2);"></div>
+            </div>
+          </label>
+          <span style="font-size:12px; font-weight:800; color:#94a3b8; letter-spacing:0.5px; transition:0.2s;" id="urgentText">MARK URGENT</span>
+        </div>
+      </div>
+
+      <button class="btn-red" onclick="submitWebOrder()" id="btnSendOrder">🚀 Submit Request</button>
+      <div id="orderSuccessMsg" class="status-saved hidden" style="margin-top:12px;">✅ Order Sent Successfully!</div>
+    </div>
+
+    <div class="form-label-sm" style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:10px;">
+      <span>MY ACTIVE & PAST ORDERS</span>
+      <span onclick="loadOrderHistory()" style="cursor:pointer; color:#d32e30;">🔄 Refresh</span>
+    </div>
+    
+    <div id="orderHistoryList">
+      <div style="text-align:center; color:#94a3b8; font-size:13px; padding:20px;">Loading your orders...</div>
+    </div>
+  </div>
+
   <div id="scannerScreen" class="screen card">
     <div class="lova-title" style="font-size:17px;margin-bottom:14px;">Point camera at Voucher</div>
     <div id="videoContainer">
@@ -268,17 +359,13 @@
     <div class="header-row" style="margin-bottom: 24px;">
       <div class="lova-title" style="font-size: 18px; margin-bottom: 0; text-align: left;">PROMOTION DETAILS</div>
     </div>
-
     <div id="detailImageContainer" style="display:none; text-align:center; margin-bottom:18px;">
       <img id="detailImage" src="" style="max-width:100%; border-radius:12px; border: 1.5px solid #e5e7eb;">
     </div>
-
     <label class="form-label-sm">Target Location</label>
     <input type="text" id="detailLocation" class="form-control" style="background:#fff;" readonly>
-
     <label class="form-label-sm">Categories</label>
     <input type="text" id="detailCategory" class="form-control" style="background:#fff;" readonly>
-
     <div style="display: flex; gap: 12px;">
       <div style="flex: 1;">
         <label class="form-label-sm">Valid From</label>
@@ -289,7 +376,6 @@
         <input type="text" id="detailDaysLeft" class="form-control" style="background:#fff; font-weight:700;" readonly>
       </div>
     </div>
-
     <div style="display: flex; gap: 12px;">
       <div style="flex: 1;">
         <label class="form-label-sm">Valid Until</label>
@@ -300,12 +386,9 @@
         <input type="text" class="form-control" style="background:#fff; color:#16a34a; font-weight:800;" value="✅ Active" readonly>
       </div>
     </div>
-
     <label class="form-label-sm">Benefits & Details</label>
     <textarea id="detailDescription" class="form-control" style="height: 140px; resize: none; background:#fff; font-size:13px;" readonly></textarea>
-
     <a id="detailDocLink" href="#" target="_blank" class="btn-gray" style="display:none; background:#0284c7; border-color:#0284c7; text-decoration:none; text-align:center; margin-bottom: 10px;">📄 View Campaign Document</a>
-
     <button onclick="showScreen('dash')" class="btn-gray mt-2" style="margin-top:0;">⬅️ Back to Promo Record</button>
   </div>
 
@@ -359,8 +442,7 @@
 </div>
 
 <script>
-  // YOUR NEW LIVE DEPLOYMENT URL
-  const GAS_URL = "https://script.google.com/macros/s/AKfycbysEwgrqz9dG5DDo2LgrcebeKJu4wejIIW1jr3V5mwtvZRHnvdDuR38NmGIC2GceRo1/exec";
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbzKbbSF3uVnDqjBNolLRxKVmTYX4mkyAIqwMhJplYJS4KrGq0Z52Y3TqY-ZJ0eE5iZX/exec";
   
   let currentUser   = "";
   let currentBranch = "";
@@ -375,6 +457,9 @@
   let scanPaused    = false;
   let pendingCode   = null;
   let pendingMethod = "scan";
+  
+  let materialCatalog = [];
+  let selectedOrderItem = "";
 
   function showScreen(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -447,7 +532,6 @@
     } catch(e) { console.error('Failed to load promos', e); }
   }
 
-  // ── INTERACTIVE ACCORDION LEADERBOARD (WHITE DESIGN) ──
   async function fetchGlobalScoreboard() {
     const container = document.getElementById('globalLeaderboardContainer');
     container.innerHTML = '<div style="text-align:center;font-size:12px;color:#888;margin-top:20px;">Fetching live leaderboard... ⏳</div>';
@@ -646,39 +730,33 @@
     document.getElementById('btnViewPromoDetails').classList.add('hidden');
   }
 
-  // Handle showing the View Details button
   function handlePromoChange() {
     const detailsBtn = document.getElementById('btnViewPromoDetails');
     if (document.getElementById('promo').value) detailsBtn.classList.remove('hidden');
     else detailsBtn.classList.add('hidden');
   }
 
-  // Populate and open the Promo Details Screen
   function openPromoDetails() {
     const promoName = document.getElementById('promo').value;
     if (!promoName) return;
 
-    // Find the specific promo data from the array
     const promoData = allPromos.find(p => p.name === promoName);
     if (!promoData) {
       alert("Detail data not loaded yet.");
       return;
     }
 
-    // Populate the fields
     document.getElementById('detailLocation').value = promoData.branch || "";
     document.getElementById('detailCategory').value = promoData.category || "";
     document.getElementById('detailValidFrom').value = promoData.validFrom || "-";
     document.getElementById('detailValidUntil').value = promoData.validUntil || "-";
     
-    // Formatting days left properly
     const daysEl = document.getElementById('detailDaysLeft');
     daysEl.value = promoData.daysLeft !== undefined && promoData.daysLeft !== null ? promoData.daysLeft + " Days" : "-";
     daysEl.style.color = (promoData.daysLeft !== "N/A" && promoData.daysLeft <= 3) ? "#d32e30" : "#1f2937";
 
     document.getElementById('detailDescription').value = promoData.details || "";
 
-    // Image Handling
     const imgContainer = document.getElementById('detailImageContainer');
     const imgEl = document.getElementById('detailImage');
     if (promoData.imageLink && promoData.imageLink.startsWith('http')) {
@@ -689,7 +767,6 @@
       imgEl.src = "";
     }
 
-    // Document Link Handling
     const docLinkBtn = document.getElementById('detailDocLink');
     if (promoData.docLink && promoData.docLink.startsWith('http')) {
       docLinkBtn.href = promoData.docLink;
@@ -699,7 +776,6 @@
       docLinkBtn.href = "#";
     }
 
-    // Show the new screen
     showScreen('promoDetailsScreen');
   }
 
@@ -785,6 +861,100 @@
   }
 
   function closeSummary() { document.getElementById('summaryOverlay').classList.remove('show'); }
+
+  // ── ORDER PORTAL LOGIC ──
+  function openOrderPortal() {
+    showScreen('orderPortalScreen');
+    loadOrderCatalog();
+    loadOrderHistory();
+    
+    const branchSelect = document.getElementById('orderBranchSelect');
+    const userBranchLower = currentBranch.toLowerCase().replace(/[^a-z0-9]/g,"");
+    for (let i = 0; i < branchSelect.options.length; i++) {
+      const optionValLower = branchSelect.options[i].value.toLowerCase().replace(/[^a-z0-9]/g,"");
+      if (optionValLower.includes(userBranchLower) || userBranchLower.includes(optionValLower)) {
+        branchSelect.selectedIndex = i;
+        break;
+      }
+    }
+  }
+
+  async function loadOrderCatalog() {
+    try {
+      const select = document.getElementById('orderItemSelect');
+      select.innerHTML = '<option value="" disabled selected>Loading Catalog...</option>';
+      const res = await callGAS('getMaterialCatalog', {});
+      const catalog = res.data || [];
+      select.innerHTML = '<option value="" disabled selected>Select an item...</option>' + catalog.map(item => `<option value="${item}">${item}</option>`).join('');
+    } catch(e) {
+      document.getElementById('orderItemSelect').innerHTML = '<option value="" disabled>Error loading catalog</option>';
+    }
+  }
+
+  async function submitWebOrder() {
+    const item = document.getElementById('orderItemSelect').value;
+    const deliveryBranch = document.getElementById('orderBranchSelect').value;
+    const specs = document.getElementById('orderSpecs').value;
+    const isUrgent = document.getElementById('orderUrgent').checked;
+    const date = document.getElementById('orderDate').value;
+    
+    if(!item || !deliveryBranch || !specs) { alert("Please complete Item, Branch, and Details."); return; }
+    
+    document.getElementById('btnSendOrder').innerText = "Sending...";
+    try {
+      const res = await callGAS('submitMaterialOrder', { 
+        item: item, 
+        details: specs, 
+        urgent: isUrgent,
+        date: date,
+        branch: deliveryBranch, 
+        staffName: currentUser 
+      });
+      
+      if(res.success) {
+        document.getElementById('orderItemSelect').value = "";
+        document.getElementById('orderSpecs').value = "";
+        document.getElementById('orderUrgent').checked = false;
+        document.getElementById('orderDate').value = "";
+        
+        document.getElementById('orderSuccessMsg').classList.remove('hidden');
+        setTimeout(() => document.getElementById('orderSuccessMsg').classList.add('hidden'), 4000);
+        loadOrderHistory();
+      } else {
+        alert("Failed to submit order.");
+      }
+    } catch(e) {
+       alert("Error submitting order.");
+    }
+    document.getElementById('btnSendOrder').innerText = "🚀 Submit Request";
+  }
+
+  async function loadOrderHistory() {
+    document.getElementById('orderHistoryList').innerHTML = '<div style="text-align:center; color:#94a3b8; font-size:13px; padding:20px;">Refreshing orders...</div>';
+    try {
+      const res = await callGAS('getUserOrders', { staffName: currentUser });
+      if (res.success && res.data.length > 0) {
+        document.getElementById('orderHistoryList').innerHTML = res.data.map(o => {
+          let statusClass = o.status === "Received" ? "badge-pending" : (o.status === "Closed" ? "badge-closed" : "badge-active");
+          return `
+            <div class="order-history-card">
+              <div class="history-top">
+                <span style="font-size:12px; font-weight:700; color:#1e293b;">${o.date}</span>
+                <span class="status-badge ${statusClass}">${o.status}</span>
+              </div>
+              <div style="font-size:14px; font-weight:800; color:#d32e30;">${o.item}</div>
+              <div style="font-size:12px; color:#64748b; white-space: pre-wrap; margin-bottom:4px;">${o.details}</div>
+              <a href="${o.link}" target="_blank" style="font-size:11px; font-weight:800; color:#0284c7; text-decoration:none; display:inline-block; margin-top:4px;">🔍 Track Timeline</a>
+            </div>
+          `;
+        }).join('');
+      } else {
+        document.getElementById('orderHistoryList').innerHTML = '<div style="text-align:center; color:#94a3b8; font-size:13px; padding:20px;">No active or past orders found.</div>';
+      }
+    } catch (e) {
+      document.getElementById('orderHistoryList').innerHTML = '<div style="text-align:center; color:#d32e30; font-size:13px; padding:20px;">Error loading history.</div>';
+    }
+  }
 </script>
 </body>
 </html>
